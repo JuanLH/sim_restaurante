@@ -9,10 +9,12 @@ import com.juanlhiciano.clases.Cliente;
 import com.juanlhiciano.clases.ListaLlegada;
 import com.juanlhiciano.clases.ListaParados;
 import com.juanlhiciano.clases.ListaSentados;
+import com.juanlhiciano.entidades.Orden;
 import com.juanlhiciano.entidades.Producto;
 import com.juanlhiciano.utilidades.Utilities;
 import java.awt.Rectangle;
 import static java.lang.Thread.sleep;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -31,76 +33,34 @@ public class frm_principal extends javax.swing.JFrame {
     ListaLlegada llegadas;
     ListaSentados sentados;
     ListaParados parados;
+    //Sentados y parados en orden de llegada
+    //Esta lista sera la que los cocineros consultaran
+    ArrayList<Cliente> espera; 
     LocalTime time;
-    String[][] prodXorden;
+    
     Producto productos;
+    ArrayList<Producto> listaProductos;
     public frm_principal() {
         initComponents();
         listaLlegada= new ArrayList<>();
         llegadas = new ListaLlegada(panelCliLlegando);
         sentados = new ListaSentados(panelCliSentados);
         parados = new ListaParados(panelCliParados);
+        espera = new ArrayList<>();
         productos = new Producto();
+        try {
+            listaProductos = productos.getListado();
+        } catch (SQLException ex) {
+            Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         time = new LocalTime(7,0,0);//Apertura
-        llenarMatrizCantOrdenes();
+        
         
         System.out.println("Boton sentados = "+btnClienteSentado.getBounds());
         System.out.println("Boton parados = "+btnClienteParado.getBounds());
     }
 
-    private void llenarMatrizCantOrdenes(){
-        prodXorden = new String[10][3];
-        prodXorden[0][0] = "1";
-        prodXorden[0][1] = "0.0000";
-        prodXorden[0][2] = "0.5000";
-        
-        prodXorden[1][0] = "2";
-        prodXorden[1][1] = "0.5001";
-        prodXorden[1][2] = "0.7000";
-        
-        prodXorden[2][0] = "3";
-        prodXorden[2][1] = "0.7001";
-        prodXorden[2][2] = "0.8000";
-        
-        prodXorden[3][0] = "4";
-        prodXorden[3][1] = "0.8001";
-        prodXorden[3][2] = "0.9000";
-        
-        prodXorden[4][0] = "5";
-        prodXorden[4][1] = "0.9001";
-        prodXorden[4][2] = "0.9500";
     
-        prodXorden[5][0] = "6";
-        prodXorden[5][1] = "0.9501";
-        prodXorden[5][2] = "0.9700";
-        
-        prodXorden[6][0] = "7";
-        prodXorden[6][1] = "0.9701";
-        prodXorden[6][2] = "0.9800";
-        
-        prodXorden[7][0] = "8";
-        prodXorden[7][1] = "0.9801";
-        prodXorden[7][2] = "0.9880";
-        
-        prodXorden[8][0] = "9";
-        prodXorden[8][1] = "0.9801";
-        prodXorden[8][2] = "0.9880";
-        
-        prodXorden[9][0] = "10";
-        prodXorden[9][1] = "0.9881";
-        prodXorden[9][2] = "1.0000";
-    }
-    
-    private int buscarCant(float random){
-        for(int x=0;x<10;x++){
-            float inicio = Float.parseFloat(prodXorden[x][1]);
-            float fin = Float.parseFloat(prodXorden[x][2]);
-            if(random>=inicio && random<=fin){
-               return Integer.parseInt(prodXorden[x][0]);
-            }
-        }
-        return 0;
-    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -361,7 +321,7 @@ public class frm_principal extends javax.swing.JFrame {
         @Override
         public void run() 
         { 
-           for(;;){
+           while(time.getHourOfDay()<12){
                Double rand = Utilities.doubleRand(0, 1);
                Double miu = 3.8;
                Double tiempo = -miu * Math.log(rand);
@@ -381,19 +341,86 @@ public class frm_principal extends javax.swing.JFrame {
     }
     
     private class HiloMesero implements Runnable{
+        
+        String[][] prodXorden;
+        public HiloMesero(){
+            llenarMatrizCantOrdenes();
+        }
+        private void llenarMatrizCantOrdenes(){
+            prodXorden = new String[10][3];
+            prodXorden[0][0] = "1";
+            prodXorden[0][1] = "0.0000";
+            prodXorden[0][2] = "0.5000";
 
+            prodXorden[1][0] = "2";
+            prodXorden[1][1] = "0.5001";
+            prodXorden[1][2] = "0.7000";
+
+            prodXorden[2][0] = "3";
+            prodXorden[2][1] = "0.7001";
+            prodXorden[2][2] = "0.8000";
+
+            prodXorden[3][0] = "4";
+            prodXorden[3][1] = "0.8001";
+            prodXorden[3][2] = "0.9000";
+
+            prodXorden[4][0] = "5";
+            prodXorden[4][1] = "0.9001";
+            prodXorden[4][2] = "0.9500";
+
+            prodXorden[5][0] = "6";
+            prodXorden[5][1] = "0.9501";
+            prodXorden[5][2] = "0.9700";
+
+            prodXorden[6][0] = "7";
+            prodXorden[6][1] = "0.9701";
+            prodXorden[6][2] = "0.9800";
+
+            prodXorden[7][0] = "8";
+            prodXorden[7][1] = "0.9801";
+            prodXorden[7][2] = "0.9880";
+
+            prodXorden[8][0] = "9";
+            prodXorden[8][1] = "0.9801";
+            prodXorden[8][2] = "0.9880";
+
+            prodXorden[9][0] = "10";
+            prodXorden[9][1] = "0.9881";
+            prodXorden[9][2] = "1.0000";
+        }
+
+        public int buscarCantOrdenes(float random){
+            for(int x=0;x<10;x++){
+                float inicio = Float.parseFloat(prodXorden[x][1]);
+                float fin = Float.parseFloat(prodXorden[x][2]);
+                if(random>=inicio && random<=fin){
+                   return Integer.parseInt(prodXorden[x][0]);
+                }
+            }
+            return 0;
+        }
+        
         @Override
         public void run() {
             for(;;){
                 if(!llegadas.isEmpty()){
                     Cliente cliente = llegadas.get(0);
                     llegadas.remove(0);
-                    Double rand = Utilities.doubleRand(0, 1);
-                    if(rand<0.5)
+                    float rand = Utilities.floatRand(0, 1);
+                    int cantidad_ordenes = buscarCantOrdenes(rand);
+                    for(int x=0;x<cantidad_ordenes;x++){
+                        float rand2 = Utilities.floatRand(0, 1);
+                        Producto prod = productos.findProducto(listaProductos, rand2);
+                        cliente.getOrdenes().add(new Orden(prod));
+                    } 
+                        
+                    
+                    if(rand<=0.7200)
                         sentados.add(cliente);
                     else
                         parados.add(cliente);
                     
+                    espera.add(cliente);
                     try {
                         sleep(500);
                     } catch (InterruptedException ex) {
@@ -412,6 +439,124 @@ public class frm_principal extends javax.swing.JFrame {
         }
     
     }
+    
+    public class CocineroPlancha implements Runnable{
+
+        ArrayList<Orden> ordenes_pendientes;
+        ArrayList<Orden> ordenes_entregadas;
+
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public ArrayList<Orden> getOrdenes_pendientes() {
+            return ordenes_pendientes;
+        }
+
+        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
+            this.ordenes_pendientes = ordenes_pendientes;
+        }
+
+        public ArrayList<Orden> getOrdenes_entregadas() {
+            return ordenes_entregadas;
+        }
+
+        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
+            this.ordenes_entregadas = ordenes_entregadas;
+        }
+        
+    
+    
+    }
+    
+    public class CocineroBBQ implements Runnable{
+
+        ArrayList<Orden> ordenes_pendientes;
+        ArrayList<Orden> ordenes_entregadas;
+
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public ArrayList<Orden> getOrdenes_pendientes() {
+            return ordenes_pendientes;
+        }
+
+        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
+            this.ordenes_pendientes = ordenes_pendientes;
+        }
+
+        public ArrayList<Orden> getOrdenes_entregadas() {
+            return ordenes_entregadas;
+        }
+
+        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
+            this.ordenes_entregadas = ordenes_entregadas;
+        }
+    
+    
+    }
+     
+    public class CocineroHotDog implements Runnable{
+
+        ArrayList<Orden> ordenes_pendientes;
+        ArrayList<Orden> ordenes_entregadas;
+
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public ArrayList<Orden> getOrdenes_pendientes() {
+            return ordenes_pendientes;
+        }
+
+        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
+            this.ordenes_pendientes = ordenes_pendientes;
+        }
+
+        public ArrayList<Orden> getOrdenes_entregadas() {
+            return ordenes_entregadas;
+        }
+
+        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
+            this.ordenes_entregadas = ordenes_entregadas;
+        }
+    
+    
+    }
+     
+    public class CocineroYaroa implements Runnable{
+
+        ArrayList<Orden> ordenes_pendientes;
+        ArrayList<Orden> ordenes_entregadas;
+
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public ArrayList<Orden> getOrdenes_pendientes() {
+            return ordenes_pendientes;
+        }
+
+        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
+            this.ordenes_pendientes = ordenes_pendientes;
+        }
+
+        public ArrayList<Orden> getOrdenes_entregadas() {
+            return ordenes_entregadas;
+        }
+
+        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
+            this.ordenes_entregadas = ordenes_entregadas;
+        }
+    
+    
+    } 
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

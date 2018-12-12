@@ -18,6 +18,7 @@ import javax.swing.JButton;
 public class Cliente extends JButton{
     Visita visita;
     ArrayList<Orden> ordenes;
+    int estado;
     
     Cliente(Time hora_llegada){
         visita = new Visita(hora_llegada);
@@ -38,6 +39,14 @@ public class Cliente extends JButton{
 
     public void setOrdenes(ArrayList<Orden> ordenes) {
         this.ordenes = ordenes;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
     
      

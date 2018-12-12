@@ -17,6 +17,11 @@ public class Orden extends JButton {
     Producto producto;
     Time t_inicio_cola,t_fin_cola,t_entrega;
 
+    public Orden(){}
+    public Orden(Producto p){
+        this.producto = p;
+    }
+    
     public int getId() {
         return id;
     }
