@@ -7,15 +7,15 @@ package com.juanlhiciano.clases;
 
 
 import java.awt.Rectangle;
+import java.sql.Time;
 import java.util.ArrayList;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
  *
  * @author JLHiciano
  */
-public class ListaLlegada extends ArrayList<JButton>{
+public class ListaLlegada extends ArrayList<Cliente>{
     
     JPanel panel;
     public ListaLlegada(JPanel panel){
@@ -24,9 +24,9 @@ public class ListaLlegada extends ArrayList<JButton>{
     
     
     
-    public boolean add (){
+    public boolean add (Time hora_llegada){
         
-        JButton btn = new JButton();
+        Cliente btn = new Cliente(hora_llegada);
         if(this.isEmpty()){
             btn.setBounds( new Rectangle(1275, 20, 25, 25));
             btn.setVisible(true);
@@ -54,11 +54,12 @@ public class ListaLlegada extends ArrayList<JButton>{
             return false;
         }
         else{
-            JButton btn = this.get(this.size()-1);
+            Cliente btn = this.get(this.size()-1);
             panel.remove(btn);
             panel.revalidate();
             panel.repaint();
             this.remove(btn);
+            //Add btn to another list
             return true;
         }
     }

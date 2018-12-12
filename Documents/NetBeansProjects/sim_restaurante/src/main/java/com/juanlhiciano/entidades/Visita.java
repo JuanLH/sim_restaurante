@@ -15,12 +15,12 @@ public class Visita {
     int id,id_simulacion;
     Time hora_llegada,hora_orden,hora_entrega,hora_salida;
     
-    public Visita(int id,int id_simulacion,Time hora_llegada){
-        this.id = id;
-        this.id_simulacion = id_simulacion;
+    public Visita(Time hora_llegada){
         this.hora_llegada = hora_llegada;
         hora_orden=hora_entrega=hora_salida=null;
     }
+    
+    
 
     public int getId() {
         return id;

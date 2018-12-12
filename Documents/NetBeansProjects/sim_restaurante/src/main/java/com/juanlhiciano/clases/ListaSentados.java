@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  *
  * @author JLHiciano
  */
-public class ListaSentados extends ArrayList<JButton>{
+public class ListaSentados extends ArrayList<Cliente>{
     
     JPanel panel;
      Rectangle rec;
@@ -25,9 +25,9 @@ public class ListaSentados extends ArrayList<JButton>{
         filas = 0;
     }
     
-    public boolean add (){
+    public boolean add (Cliente btn){
         
-        JButton btn = new JButton();
+        
         if(this.isEmpty()){
             btn.setBounds(rec);
             btn.setVisible(true);
@@ -60,16 +60,16 @@ public class ListaSentados extends ArrayList<JButton>{
         
     }
     
-    public boolean remove(){
+    public boolean remove(Cliente btn){
         if(this.isEmpty()){
             return false;
         }
         else{
-            JButton btn = this.get(this.size()-1);
             panel.remove(btn);
             panel.revalidate();
             panel.repaint();
             this.remove(btn);
+            //add btn to another list
             return true;
         }
     }

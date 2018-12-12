@@ -6,13 +6,15 @@
 package com.juanlhiciano.entidades;
 
 import java.sql.Time;
+import javax.swing.JButton;
 
 /**
  *
  * @author JLHiciano
  */
-public class Orden {
-    int id,id_visita,id_producto;
+public class Orden extends JButton {
+    int id,id_visita;
+    Producto producto;
     Time t_inicio_cola,t_fin_cola,t_entrega;
 
     public int getId() {
@@ -29,14 +31,6 @@ public class Orden {
 
     public void setId_visita(int id_visita) {
         this.id_visita = id_visita;
-    }
-
-    public int getId_producto() {
-        return id_producto;
-    }
-
-    public void setId_producto(int id_producto) {
-        this.id_producto = id_producto;
     }
 
     public Time getT_inicio_cola() {
@@ -61,6 +55,14 @@ public class Orden {
 
     public void setT_entrega(Time t_entrega) {
         this.t_entrega = t_entrega;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
     
     

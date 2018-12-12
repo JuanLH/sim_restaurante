@@ -19,8 +19,26 @@ public class Cliente extends JButton{
     Visita visita;
     ArrayList<Orden> ordenes;
     
-    Cliente(int id_visita,int id_simulacion,Time hora_llegada){
-        visita = new Visita(id_visita,id_simulacion,hora_llegada);
+    Cliente(Time hora_llegada){
+        visita = new Visita(hora_llegada);
         ordenes= new ArrayList<>();
     }
+
+    public Visita getVisita() {
+        return visita;
+    }
+
+    public void setVisita(Visita visita) {
+        this.visita = visita;
+    }
+
+    public ArrayList<Orden> getOrdenes() {
+        return ordenes;
+    }
+
+    public void setOrdenes(ArrayList<Orden> ordenes) {
+        this.ordenes = ordenes;
+    }
+    
+     
 }
