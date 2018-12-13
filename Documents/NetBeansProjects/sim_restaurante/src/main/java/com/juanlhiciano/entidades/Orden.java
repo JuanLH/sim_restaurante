@@ -16,10 +16,11 @@ public class Orden extends JButton {
     int id,id_visita;
     Producto producto;
     Time t_inicio_cola,t_fin_cola,t_entrega;
-
+    int estado;//para marcar el proceso
     public Orden(){}
-    public Orden(Producto p){
+    public Orden(Producto p,Time t_inicio_cola){
         this.producto = p;
+        this.t_inicio_cola = t_inicio_cola;
     }
     
     public int getId() {
@@ -68,6 +69,14 @@ public class Orden extends JButton {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
     
     

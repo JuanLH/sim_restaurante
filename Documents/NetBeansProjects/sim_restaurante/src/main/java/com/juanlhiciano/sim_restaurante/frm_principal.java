@@ -7,10 +7,16 @@ package com.juanlhiciano.sim_restaurante;
 
 import com.juanlhiciano.clases.Cliente;
 import com.juanlhiciano.clases.ListaLlegada;
+import com.juanlhiciano.clases.ListaOrdenBbq;
+import com.juanlhiciano.clases.ListaOrdenHd;
+import com.juanlhiciano.clases.ListaOrdenPlancha;
+import com.juanlhiciano.clases.ListaOrdenYaroa;
 import com.juanlhiciano.clases.ListaParados;
 import com.juanlhiciano.clases.ListaSentados;
+import com.juanlhiciano.entidades.Dia;
 import com.juanlhiciano.entidades.Orden;
 import com.juanlhiciano.entidades.Producto;
+import com.juanlhiciano.entidades.Tanda;
 import com.juanlhiciano.utilidades.Utilities;
 import java.awt.Rectangle;
 import static java.lang.Thread.sleep;
@@ -36,8 +42,15 @@ public class frm_principal extends javax.swing.JFrame {
     //Sentados y parados en orden de llegada
     //Esta lista sera la que los cocineros consultaran
     ArrayList<Cliente> espera; 
-    LocalTime time;
     
+    ListaOrdenPlancha ordenesPlancha;
+    ListaOrdenHd ordenesHd;
+    ListaOrdenYaroa ordenesYaroa;
+    ListaOrdenBbq ordenesBbq;
+    
+    
+    LocalTime time;
+    Tanda tanda;
     Producto productos;
     ArrayList<Producto> listaProductos;
     public frm_principal() {
@@ -47,6 +60,13 @@ public class frm_principal extends javax.swing.JFrame {
         sentados = new ListaSentados(panelCliSentados);
         parados = new ListaParados(panelCliParados);
         espera = new ArrayList<>();
+        
+        ordenesPlancha = new ListaOrdenPlancha(PlanchaPanel);
+        ordenesHd = new ListaOrdenHd(HdPanel);
+        ordenesYaroa = new ListaOrdenYaroa(YaroaPanel);
+        ordenesBbq = new ListaOrdenBbq(BbqPanel);
+        
+        
         productos = new Producto();
         try {
             listaProductos = productos.getListado();
@@ -54,10 +74,18 @@ public class frm_principal extends javax.swing.JFrame {
             Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         time = new LocalTime(7,0,0);//Apertura
+        try {
+            ArrayList<Dia> dias = Dia.getDias();
+            
+            
+            cmbDias.removeAllItems();
+            for(Dia dia : dias){
+                cmbDias.addItem(dia.toString());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        
-        System.out.println("Boton sentados = "+btnClienteSentado.getBounds());
-        System.out.println("Boton parados = "+btnClienteParado.getBounds());
     }
 
     
@@ -68,23 +96,32 @@ public class frm_principal extends javax.swing.JFrame {
 
         panelCliLlegando = new javax.swing.JPanel();
         panelCliSentados = new javax.swing.JPanel();
-        btnClienteSentado = new javax.swing.JButton();
-        btnClienteParado = new javax.swing.JButton();
         panelCliParados = new javax.swing.JPanel();
         panelCocina = new javax.swing.JPanel();
+        PlanchaPanel = new javax.swing.JPanel();
+        HdPanel = new javax.swing.JPanel();
+        YaroaPanel = new javax.swing.JPanel();
+        BbqPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lblCantPlancha = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblCantHd = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        lblCantYaroa = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        lblCantBbq = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbDias = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtPlancha = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtHd = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtYaroa = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        txtBbq = new javax.swing.JTextField();
+        btnIniciarSim = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -101,38 +138,25 @@ public class frm_principal extends javax.swing.JFrame {
         panelCliLlegando.setLayout(panelCliLlegandoLayout);
         panelCliLlegandoLayout.setHorizontalGroup(
             panelCliLlegandoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1334, Short.MAX_VALUE)
+            .addGap(0, 1300, Short.MAX_VALUE)
         );
         panelCliLlegandoLayout.setVerticalGroup(
             panelCliLlegandoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 59, Short.MAX_VALUE)
+            .addGap(0, 22, Short.MAX_VALUE)
         );
 
         panelCliSentados.setBackground(new java.awt.Color(204, 204, 0));
         panelCliSentados.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CLIENTES SENTADOS", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
-        btnClienteSentado.setText("jButton4");
-
-        btnClienteParado.setText("jButton4");
-
         javax.swing.GroupLayout panelCliSentadosLayout = new javax.swing.GroupLayout(panelCliSentados);
         panelCliSentados.setLayout(panelCliSentadosLayout);
         panelCliSentadosLayout.setHorizontalGroup(
             panelCliSentadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCliSentadosLayout.createSequentialGroup()
-                .addContainerGap(632, Short.MAX_VALUE)
-                .addGroup(panelCliSentadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnClienteParado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClienteSentado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+            .addGap(0, 671, Short.MAX_VALUE)
         );
         panelCliSentadosLayout.setVerticalGroup(
             panelCliSentadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCliSentadosLayout.createSequentialGroup()
-                .addComponent(btnClienteParado)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClienteSentado)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 91, Short.MAX_VALUE)
         );
 
         panelCliParados.setBackground(new java.awt.Color(0, 153, 153));
@@ -142,66 +166,190 @@ public class frm_principal extends javax.swing.JFrame {
         panelCliParados.setLayout(panelCliParadosLayout);
         panelCliParadosLayout.setHorizontalGroup(
             panelCliParadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 513, Short.MAX_VALUE)
+            .addGap(0, 479, Short.MAX_VALUE)
         );
         panelCliParadosLayout.setVerticalGroup(
             panelCliParadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         panelCocina.setBackground(new java.awt.Color(204, 204, 204));
         panelCocina.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "COCINA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
+        PlanchaPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plancha", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        javax.swing.GroupLayout PlanchaPanelLayout = new javax.swing.GroupLayout(PlanchaPanel);
+        PlanchaPanel.setLayout(PlanchaPanelLayout);
+        PlanchaPanelLayout.setHorizontalGroup(
+            PlanchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+        );
+        PlanchaPanelLayout.setVerticalGroup(
+            PlanchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 34, Short.MAX_VALUE)
+        );
+
+        HdPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Hot Dogs", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        javax.swing.GroupLayout HdPanelLayout = new javax.swing.GroupLayout(HdPanel);
+        HdPanel.setLayout(HdPanelLayout);
+        HdPanelLayout.setHorizontalGroup(
+            HdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+        );
+        HdPanelLayout.setVerticalGroup(
+            HdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 34, Short.MAX_VALUE)
+        );
+
+        YaroaPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Yaroas y demas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        javax.swing.GroupLayout YaroaPanelLayout = new javax.swing.GroupLayout(YaroaPanel);
+        YaroaPanel.setLayout(YaroaPanelLayout);
+        YaroaPanelLayout.setHorizontalGroup(
+            YaroaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+        );
+        YaroaPanelLayout.setVerticalGroup(
+            YaroaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 34, Short.MAX_VALUE)
+        );
+
+        BbqPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BBQ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        javax.swing.GroupLayout BbqPanelLayout = new javax.swing.GroupLayout(BbqPanel);
+        BbqPanel.setLayout(BbqPanelLayout);
+        BbqPanelLayout.setHorizontalGroup(
+            BbqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+        );
+        BbqPanelLayout.setVerticalGroup(
+            BbqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 34, Short.MAX_VALUE)
+        );
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel1.setText("CANTIDAD DE COCINEROS:");
+
+        lblCantPlancha.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblCantPlancha.setText("#");
+
+        jLabel8.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel8.setText("CANTIDAD DE COCINEROS:");
+
+        lblCantHd.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblCantHd.setText("#");
+
+        jLabel10.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel10.setText("CANTIDAD DE COCINEROS:");
+
+        lblCantYaroa.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblCantYaroa.setText("#");
+
+        jLabel12.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel12.setText("CANTIDAD DE COCINEROS:");
+
+        lblCantBbq.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblCantBbq.setText("#");
+
         javax.swing.GroupLayout panelCocinaLayout = new javax.swing.GroupLayout(panelCocina);
         panelCocina.setLayout(panelCocinaLayout);
         panelCocinaLayout.setHorizontalGroup(
             panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(panelCocinaLayout.createSequentialGroup()
+                .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PlanchaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(HdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(YaroaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BbqPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelCocinaLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelCocinaLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCantPlancha))
+                            .addGroup(panelCocinaLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCantHd))
+                            .addGroup(panelCocinaLayout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCantYaroa))
+                            .addGroup(panelCocinaLayout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCantBbq)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelCocinaLayout.setVerticalGroup(
             panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 378, Short.MAX_VALUE)
+            .addGroup(panelCocinaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(lblCantPlancha))
+                .addGap(2, 2, 2)
+                .addComponent(PlanchaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(lblCantHd))
+                .addGap(5, 5, 5)
+                .addComponent(HdPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(lblCantYaroa))
+                .addGap(3, 3, 3)
+                .addComponent(YaroaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addGroup(panelCocinaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(lblCantBbq))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BbqPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(0, 153, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CONFIGURACION", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
-        jComboBox1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbDias.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cmbDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel2.setText("DIA:");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel3.setText("CANTIDAD CT1:");
+        jLabel3.setText("COCINEROS PLANCHA:");
 
-        jTextField1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtPlancha.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel4.setText("CANTIDAD CT2:");
+        jLabel4.setText("COCINEROS HOT DOGS:");
 
-        jTextField2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtHd.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel5.setText("CANTIDAD CT3:");
+        jLabel5.setText("COCINEROS YAROAS:");
 
-        jTextField3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtYaroa.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setText("CANTIDAD CT4:");
+        jLabel6.setText("COCINEROS BBQ:");
 
-        jTextField4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtBbq.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setText("INICIAR");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnIniciarSim.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnIniciarSim.setText("INICIAR");
+        btnIniciarSim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnIniciarSimActionPerformed(evt);
             }
         });
-
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton2.setText("PAUSAR");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -211,27 +359,25 @@ public class frm_principal extends javax.swing.JFrame {
                 .addGap(7, 7, 7)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbDias, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtPlancha, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtHd, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtYaroa, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtBbq, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(btnIniciarSim)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -239,19 +385,18 @@ public class frm_principal extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbDias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPlancha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtHd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtYaroa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addComponent(txtBbq, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnIniciarSim, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButton3.setText("MESERO");
@@ -284,14 +429,14 @@ public class frm_principal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelCocina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelCliParados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelCliSentados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelCocina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelCliSentados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelCliParados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panelCliLlegando, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -308,14 +453,16 @@ public class frm_principal extends javax.swing.JFrame {
         llegadas.remove();
     }//GEN-LAST:event_jButton3MouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnIniciarSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSimActionPerformed
+        
+        
         
         Thread hilo_llegadas = new Thread(new HiloLlegada());
         Thread hilo_mesero = new Thread(new HiloMesero());
         hilo_llegadas.start();
         hilo_mesero.start();
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnIniciarSimActionPerformed
 
     private class HiloLlegada implements Runnable{
         @Override
@@ -399,6 +546,25 @@ public class frm_principal extends javax.swing.JFrame {
             }
             return 0;
         }
+        //Distribuir ordenes a los cocineros
+        public void repartirOrdenes(Cliente cliente){
+            for(Orden or : cliente.getOrdenes()){
+                //System.out.println("Orden  ---- "+or.getProducto().getNombre()+" tipo ---- "+or.getProducto().getId_tipo_producto());
+                if(or.getProducto().getId_tipo_producto() == 1){
+                    ordenesPlancha.add(or);
+                }
+                else if(or.getProducto().getId_tipo_producto() == 2){
+                    ordenesHd.add(or);
+                }
+                else if(or.getProducto().getId_tipo_producto() == 3){
+                   ordenesYaroa.add(or);
+                }
+                else if(or.getProducto().getId_tipo_producto() == 4){
+                    ordenesBbq.add(or);
+                }
+                
+            }
+        }
         
         @Override
         public void run() {
@@ -411,9 +577,10 @@ public class frm_principal extends javax.swing.JFrame {
                     for(int x=0;x<cantidad_ordenes;x++){
                         float rand2 = Utilities.floatRand(0, 1);
                         Producto prod = productos.findProducto(listaProductos, rand2);
-                        cliente.getOrdenes().add(new Orden(prod));
+                        cliente.getOrdenes().add(new Orden(prod,new Time(time.getHourOfDay(), time.getMinuteOfHour(), time.getSecondOfMinute())));
                     } 
                         
+                    repartirOrdenes(cliente);
                     
                     if(rand<=0.7200)
                         sentados.add(cliente);
@@ -590,25 +757,34 @@ public class frm_principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClienteParado;
-    private javax.swing.JButton btnClienteSentado;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JPanel BbqPanel;
+    private javax.swing.JPanel HdPanel;
+    private javax.swing.JPanel PlanchaPanel;
+    private javax.swing.JPanel YaroaPanel;
+    private javax.swing.JButton btnIniciarSim;
+    private javax.swing.JComboBox<String> cmbDias;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JLabel lblCantBbq;
+    private javax.swing.JLabel lblCantHd;
+    private javax.swing.JLabel lblCantPlancha;
+    private javax.swing.JLabel lblCantYaroa;
     private javax.swing.JPanel panelCliLlegando;
     private javax.swing.JPanel panelCliParados;
     private javax.swing.JPanel panelCliSentados;
     private javax.swing.JPanel panelCocina;
+    private javax.swing.JTextField txtBbq;
+    private javax.swing.JTextField txtHd;
+    private javax.swing.JTextField txtPlancha;
+    private javax.swing.JTextField txtYaroa;
     // End of variables declaration//GEN-END:variables
 }

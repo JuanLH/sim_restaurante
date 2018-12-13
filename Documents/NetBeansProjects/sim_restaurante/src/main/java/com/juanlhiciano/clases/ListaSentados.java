@@ -21,7 +21,7 @@ public class ListaSentados extends ArrayList<Cliente>{
     int filas;
     public ListaSentados(JPanel panel){
         this.panel = panel;
-        rec = new Rectangle(666, 19, 25, 25);
+        rec = new Rectangle(666, 19, 20, 20);
         filas = 0;
     }
     

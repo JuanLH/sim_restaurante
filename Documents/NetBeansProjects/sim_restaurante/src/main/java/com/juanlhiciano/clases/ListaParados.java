@@ -21,7 +21,7 @@ public class ListaParados extends ArrayList<Cliente>{
     int filas;
     public ListaParados(JPanel panel){
         this.panel = panel;
-        rec = new Rectangle(508, 19, 25, 25);
+        rec = new Rectangle(508, 19, 20, 20);
         filas = 0;
     }
     

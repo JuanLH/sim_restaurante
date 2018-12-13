@@ -96,7 +96,7 @@ public class Producto {
             pro.setId(rs.getInt(1));
             pro.setNombre(rs.getString(2));
             pro.setPrecio(rs.getInt(3));
-            pro.setId_tipo_producto(4);
+            pro.setId_tipo_producto(rs.getInt(4));
             pro.setTiempo_min_prep(rs.getInt(5));
             pro.setTiempo_max_prep(rs.getInt(6));
             pro.setRango_inicial(rs.getFloat(7));
