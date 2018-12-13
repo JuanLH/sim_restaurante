@@ -16,9 +16,9 @@ import javax.swing.JPanel;
  *
  * @author JLHiciano
  */
-public class ListaOrdenPlancha extends ArrayList<Orden> {
+public class ListaOrden extends ArrayList<Orden> {
     JPanel panel;
-    public ListaOrdenPlancha(JPanel panel){
+    public ListaOrden(JPanel panel){
         this.panel = panel;
     }
     

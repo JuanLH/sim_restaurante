@@ -9,7 +9,7 @@ import com.juanlhiciano.clases.Cliente;
 import com.juanlhiciano.clases.ListaLlegada;
 import com.juanlhiciano.clases.ListaOrdenBbq;
 import com.juanlhiciano.clases.ListaOrdenHd;
-import com.juanlhiciano.clases.ListaOrdenPlancha;
+import com.juanlhiciano.clases.ListaOrden;
 import com.juanlhiciano.clases.ListaOrdenYaroa;
 import com.juanlhiciano.clases.ListaParados;
 import com.juanlhiciano.clases.ListaSentados;
@@ -43,10 +43,10 @@ public class frm_principal extends javax.swing.JFrame {
     //Esta lista sera la que los cocineros consultaran
     ArrayList<Cliente> espera; 
     
-    ListaOrdenPlancha ordenesPlancha;
-    ListaOrdenHd ordenesHd;
-    ListaOrdenYaroa ordenesYaroa;
-    ListaOrdenBbq ordenesBbq;
+    ListaOrden ordenesPlancha;
+    ListaOrden ordenesHd;
+    ListaOrden ordenesYaroa;
+    ListaOrden ordenesBbq;
     
     
     LocalTime time;
@@ -61,10 +61,10 @@ public class frm_principal extends javax.swing.JFrame {
         parados = new ListaParados(panelCliParados);
         espera = new ArrayList<>();
         
-        ordenesPlancha = new ListaOrdenPlancha(PlanchaPanel);
-        ordenesHd = new ListaOrdenHd(HdPanel);
-        ordenesYaroa = new ListaOrdenYaroa(YaroaPanel);
-        ordenesBbq = new ListaOrdenBbq(BbqPanel);
+        ordenesPlancha = new ListaOrden(PlanchaPanel);
+        ordenesHd = new ListaOrden(HdPanel);
+        ordenesYaroa = new ListaOrden(YaroaPanel);
+        ordenesBbq = new ListaOrden(BbqPanel);
         
         
         productos = new Producto();
@@ -607,7 +607,7 @@ public class frm_principal extends javax.swing.JFrame {
     
     }
     
-    public class CocineroPlancha implements Runnable{
+    public class HiloCocinero implements Runnable{
 
         ArrayList<Orden> ordenes_pendientes;
         ArrayList<Orden> ordenes_entregadas;
@@ -637,92 +637,10 @@ public class frm_principal extends javax.swing.JFrame {
     
     }
     
-    public class CocineroBBQ implements Runnable{
-
-        ArrayList<Orden> ordenes_pendientes;
-        ArrayList<Orden> ordenes_entregadas;
-
-        @Override
-        public void run() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public ArrayList<Orden> getOrdenes_pendientes() {
-            return ordenes_pendientes;
-        }
-
-        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
-            this.ordenes_pendientes = ordenes_pendientes;
-        }
-
-        public ArrayList<Orden> getOrdenes_entregadas() {
-            return ordenes_entregadas;
-        }
-
-        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
-            this.ordenes_entregadas = ordenes_entregadas;
-        }
     
     
-    }
-     
-    public class CocineroHotDog implements Runnable{
-
-        ArrayList<Orden> ordenes_pendientes;
-        ArrayList<Orden> ordenes_entregadas;
-
-        @Override
-        public void run() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public ArrayList<Orden> getOrdenes_pendientes() {
-            return ordenes_pendientes;
-        }
-
-        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
-            this.ordenes_pendientes = ordenes_pendientes;
-        }
-
-        public ArrayList<Orden> getOrdenes_entregadas() {
-            return ordenes_entregadas;
-        }
-
-        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
-            this.ordenes_entregadas = ordenes_entregadas;
-        }
     
     
-    }
-     
-    public class CocineroYaroa implements Runnable{
-
-        ArrayList<Orden> ordenes_pendientes;
-        ArrayList<Orden> ordenes_entregadas;
-
-        @Override
-        public void run() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public ArrayList<Orden> getOrdenes_pendientes() {
-            return ordenes_pendientes;
-        }
-
-        public void setOrdenes_pendientes(ArrayList<Orden> ordenes_pendientes) {
-            this.ordenes_pendientes = ordenes_pendientes;
-        }
-
-        public ArrayList<Orden> getOrdenes_entregadas() {
-            return ordenes_entregadas;
-        }
-
-        public void setOrdenes_entregadas(ArrayList<Orden> ordenes_entregadas) {
-            this.ordenes_entregadas = ordenes_entregadas;
-        }
-    
-    
-    } 
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
