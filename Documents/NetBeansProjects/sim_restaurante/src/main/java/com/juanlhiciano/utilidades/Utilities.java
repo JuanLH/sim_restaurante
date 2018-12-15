@@ -41,8 +41,7 @@ public class Utilities {
     }
     
     public static int intRand(int leftLimit,int rightLimit) {
-        Random rand = new Random();
-        return leftLimit + rand.nextInt() * (rightLimit - leftLimit);
+        return (int)(Math.random()*((rightLimit-leftLimit)+1))+leftLimit;
     }
 	
 

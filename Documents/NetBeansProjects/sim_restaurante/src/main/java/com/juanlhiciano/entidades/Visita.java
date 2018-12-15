@@ -13,8 +13,8 @@ import java.sql.Time;
  */
 public class Visita {
     int id,id_simulacion;
-    Time hora_llegada,hora_orden,hora_entrega,hora_salida;
-    
+    Time hora_llegada,hora_orden,hora_entrega,hora_fin_comer,hora_salida;
+
     public Visita(Time hora_llegada){
         this.hora_llegada = hora_llegada;
         hora_orden=hora_entrega=hora_salida=null;
@@ -70,5 +70,12 @@ public class Visita {
         this.hora_salida = hora_salida;
     }
     
+    public Time getHora_fin_comer() {
+        return hora_fin_comer;
+    }
+
+    public void setHora_fin_comer(Time hora_fin_comer) {
+        this.hora_fin_comer = hora_fin_comer;
+    }
     
 }

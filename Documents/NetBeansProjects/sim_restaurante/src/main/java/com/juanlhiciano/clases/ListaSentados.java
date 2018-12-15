@@ -5,8 +5,11 @@
  */
 package com.juanlhiciano.clases;
 
+import Enumeradores.EstadoCliente;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -14,7 +17,7 @@ import javax.swing.JPanel;
  *
  * @author JLHiciano
  */
-public class ListaSentados extends ArrayList<Cliente>{
+public class ListaSentados extends Vector<Cliente>{
     
     JPanel panel;
      Rectangle rec;
@@ -27,7 +30,7 @@ public class ListaSentados extends ArrayList<Cliente>{
     
     public boolean add (Cliente btn){
         
-        
+        btn.setEstado(EstadoCliente.ESPERANDO);
         if(this.isEmpty()){
             btn.setBounds(rec);
             btn.setVisible(true);
@@ -74,4 +77,23 @@ public class ListaSentados extends ArrayList<Cliente>{
         }
     }
     
+    public void changeStatus(EstadoCliente estado,Cliente cli){
+        try{
+            if(estado == EstadoCliente.COMIENDO){
+                cli.setEstado(estado);
+               cli.setBackground(Color.ORANGE);
+            }
+
+            if(estado == EstadoCliente.REPOSANDO){
+                cli.setEstado(estado);
+                cli.setBackground(Color.GREEN);
+            }
+
+            panel.revalidate();
+            panel.repaint();
+       }
+       catch(Exception ex){
+           System.err.println("Cambiando el color"+ex.getMessage());
+       }
+    }
 }

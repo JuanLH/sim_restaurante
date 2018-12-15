@@ -5,6 +5,7 @@
  */
 package com.juanlhiciano.entidades;
 
+import Enumeradores.EstadoOrden;
 import java.sql.Time;
 import javax.swing.JButton;
 
@@ -16,11 +17,12 @@ public class Orden extends JButton {
     int id,id_visita;
     Producto producto;
     Time t_inicio_cola,t_fin_cola,t_entrega;
-    int estado;//para marcar el proceso
+    EstadoOrden estado;//para marcar el proceso
     public Orden(){}
     public Orden(Producto p,Time t_inicio_cola){
         this.producto = p;
         this.t_inicio_cola = t_inicio_cola;
+        this.estado = EstadoOrden.TOMADA;
     }
     
     public int getId() {
@@ -71,11 +73,11 @@ public class Orden extends JButton {
         this.producto = producto;
     }
 
-    public int getEstado() {
+    public EstadoOrden getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(EstadoOrden estado) {
         this.estado = estado;
     }
     

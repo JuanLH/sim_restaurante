@@ -27,6 +27,7 @@ public class ListaLlegada extends ArrayList<Cliente>{
     public boolean add (Time hora_llegada){
         
         Cliente btn = new Cliente(hora_llegada);
+        
         if(this.isEmpty()){
             btn.setBounds( new Rectangle(1275, 20, 25, 25));
             btn.setVisible(true);
