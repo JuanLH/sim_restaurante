@@ -23,7 +23,7 @@ public class Cliente extends JButton{
     ArrayList<Orden> ordenes;
     EstadoCliente estado;
     
-    Cliente(Time hora_llegada){
+    public Cliente(Time hora_llegada){
         this.addActionListener(new SomeAction(this));
         visita = new Visita(hora_llegada);
         ordenes= new ArrayList<>();
@@ -65,10 +65,21 @@ public class Cliente extends JButton{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println(cliente.getOrdenes().size());
+            
+            System.out.println("Hora llegada "+cliente.getVisita().getHora_llegada());
+            System.out.println("Hora orden "+cliente.getVisita().getHora_orden());
+            System.out.println("Hora entrega "+cliente.getVisita().getHora_entrega());
+            System.out.println("Hora comer "+cliente.getVisita().getHora_fin_comer());
+            System.out.println("Hora Salida "+cliente.getVisita().getHora_salida());
+            
+            System.out.println("Cantidad Ordenes -------------------->"+cliente.getOrdenes().size());
             System.out.println(cliente.getEstado());
-            for(Orden or : cliente.getOrdenes())
+            for(Orden or : cliente.getOrdenes()){
                 System.out.println(or.getProducto().getNombre()+" status="+or.getEstado());
+                System.out.println(or.getT_inicio_cola()+" - "+or.getT_fin_cola()+" "+or.getT_entrega());
+            }
+            
+            
         }
         
         

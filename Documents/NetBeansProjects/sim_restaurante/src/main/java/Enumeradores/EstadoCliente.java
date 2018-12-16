@@ -12,6 +12,7 @@ package Enumeradores;
 public enum EstadoCliente {
     LLEGANDO,
     ESPERANDO,
+    CONORDEN,
     COMIENDO,
     REPOSANDO,
     SALIO

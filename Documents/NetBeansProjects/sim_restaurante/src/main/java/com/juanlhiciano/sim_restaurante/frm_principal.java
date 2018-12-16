@@ -64,9 +64,21 @@ public class frm_principal extends javax.swing.JFrame {
     int denominador_tiempo;
     Tanda tanda;
     Producto productos;
+    
+    //*********************Generar Tiempo***************************************
+     List<Cliente> clientesG;
+     List<Orden>[] ordenesPlanchaG;
+     List<Orden>[] ordenesHdG;
+     List<Orden>[] ordenesYaroaG;
+     List<Orden>[] ordenesBbqG;
+    //**************************************************************************
+    
     ArrayList<Producto> listaProductos;
     public frm_principal() {
         initComponents();
+        
+        
+        
         denominador_tiempo = 1024;
         listaLlegada= new ArrayList<>();
         llegadas = new ListaLlegada(panelCliLlegando);
@@ -100,6 +112,7 @@ public class frm_principal extends javax.swing.JFrame {
             Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        generarTiempos();
     }
 
     synchronized private Cliente getCliente(Orden orden){
@@ -490,7 +503,17 @@ public class frm_principal extends javax.swing.JFrame {
 
     private void btnIniciarSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSimActionPerformed
         
-        Thread[] coc_plancha = new Thread[Integer.parseInt(txtPlancha.getText())];
+        //*********************Generar Tiempo***********************************
+        clientesG = new ArrayList<>();
+        ordenesPlanchaG = new ArrayList[Integer.parseInt(txtPlancha.getText())];
+        ordenesHdG = new ArrayList[Integer.parseInt(txtHd.getText())];
+        ordenesYaroaG = new ArrayList[Integer.parseInt(txtYaroa.getText())];
+        ordenesBbqG = new ArrayList[Integer.parseInt(txtBbq.getText())];     
+
+        generarTiempos();
+        //**********************************************************************
+        
+        /*Thread[] coc_plancha = new Thread[Integer.parseInt(txtPlancha.getText())];
         Thread[] coc_hd = new Thread[Integer.parseInt(txtHd.getText())];
         Thread[] coc_yaroa = new Thread[Integer.parseInt(txtYaroa.getText())];
         Thread[] coc_bbq = new Thread[Integer.parseInt(txtBbq.getText())];
@@ -546,7 +569,7 @@ public class frm_principal extends javax.swing.JFrame {
             coc_yaroa[x].execute();
         }
         */
-        
+        /*
         Reloj reloj = new Reloj();
         Thread hilo_llegadas = new Thread(new HiloLlegada());
         hilo_llegadas.setName("LLEGADAS");
@@ -571,12 +594,220 @@ public class frm_principal extends javax.swing.JFrame {
             @Override
             protected void done() {
                 System.err.println("Hey due");
+                revisionClientes();
             }
         };
         sw.execute();
         
+        */
+        
     }//GEN-LAST:event_btnIniciarSimActionPerformed
 
+    //*************************Generar Tiempos*********************************
+    
+    
+    private void generarTiempos(){
+        LocalTime clock = new LocalTime(7, 0, 0);
+        HiloMesero mesero = new HiloMesero();
+        
+        if(clientesG.isEmpty()){
+            Cliente cli = new Cliente(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
+            int tiempo_orden = Utilities.intRand(2,8);
+            clock = clock.plusMinutes(tiempo_orden);
+            cli.getVisita().setHora_orden(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
+            int cant_ordenes = mesero.buscarCantOrdenes(Utilities.floatRand(0, 1));
+            
+            for(int x=0;x<cant_ordenes;x++){
+                float rand2 = Utilities.floatRand(0, 1);
+                Producto prod = productos.findProducto(listaProductos, rand2);
+                Orden or = new Orden(prod,new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
+                if(or.getProducto() != null){
+                    int minPreparacion = Utilities.intRand(
+                            or.getProducto().getTiempo_min_prep(),
+                            or.getProducto().getTiempo_max_prep());
+                    LocalTime cocinaClock = clock;
+                    switch(or.getProducto().getId_tipo_producto()){
+                        case 1://Plancha
+                            if(!ordenesPlanchaG.isEmpty()){
+                                //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
+                                Time finCola = ordenesPlanchaG.get(ordenesPlanchaG.size()-1).getT_entrega();
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = new LocalTime(finCola.getTime());
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesPlanchaG.add(or);
+                            }
+                            else{
+                                //Como la cola esta vacia el tiempo de inicio y fin son iguales
+                                or.setT_fin_cola(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesPlanchaG.add(or);
+                            }
+                        break;
+                        case 2://Hot Dog
+                            if(!ordenesHdG.isEmpty()){
+                                //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
+                                Time finCola = ordenesHdG.get(ordenesHdG.size()-1).getT_entrega();
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = new LocalTime(finCola.getTime());
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesHdG.add(or);
+                            }
+                            else{
+                                //Como la cola esta vacia el tiempo de inicio y fin son iguales
+                                or.setT_fin_cola(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesHdG.add(or);
+                            }
+                        break;
+                        case 3://Yaroa
+                            if(!ordenesYaroaG.isEmpty()){
+                                //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
+                                Time finCola = ordenesYaroaG.get(ordenesYaroaG.size()-1).getT_entrega();
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = new LocalTime(finCola.getTime());
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesYaroaG.add(or);
+                            }
+                            else{
+                                //Como la cola esta vacia el tiempo de inicio y fin son iguales
+                                or.setT_fin_cola(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesYaroaG.add(or);
+                            }
+                        break;
+                        case 4://BBQ 
+                            if(!ordenesBbqG.isEmpty()){
+                                //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
+                                Time finCola = ordenesBbqG.get(ordenesBbqG.size()-1).getT_entrega();
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = new LocalTime(finCola.getTime());
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesBbqG.add(or);
+                            }
+                            else{
+                                //Como la cola esta vacia el tiempo de inicio y fin son iguales
+                                or.setT_fin_cola(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                cocinaClock = cocinaClock.plusMinutes(minPreparacion);
+                                or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
+                                ordenesBbqG.add(or);
+                            }
+                        break;    
+                    }
+                    //------------
+                    
+                    cli.getOrdenes().add(or);
+                }
+                else
+                    System.err.println("Se creo el producto de una orden nula----------------------------------------------------");
+            }
+            
+            Time hEntrega = getMaxTimeEntrega(cli);
+            clock = new LocalTime(hEntrega.getTime());
+            cli.getVisita().setHora_entrega(hEntrega);
+            int tiempoComer = Utilities.intRand(5, 12);
+            clock = clock.plusMinutes(tiempoComer);
+            cli.getVisita().setHora_fin_comer(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
+            
+            //Distribucion exponencial para el tiempo de salida
+            Double rand = Utilities.doubleRand(0, 1);
+            Double miu = 4.8;
+            Double tiempo = -miu * Math.log(rand);
+            clock = clock.plusMillis((int) (tiempo * 60000));
+            cli.getVisita().setHora_salida(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
+            clientesG.add(cli);
+        }
+        
+        System.out.println("Cliente \n"
+                + "Hora llegada = "+clientesG.get(0).getVisita().getHora_llegada()+"\n"
+                + "Hora orden = "+clientesG.get(0).getVisita().getHora_orden()+"\n"
+                + "Hora Entrega = "+clientesG.get(0).getVisita().getHora_entrega()+"\n"
+                + "Hora termino comida = "+clientesG.get(0).getVisita().getHora_fin_comer()+"\n"
+                + "Hora Salida = "+clientesG.get(0).getVisita().getHora_salida()+"\n");
+        for(Orden orden : clientesG.get(0).getOrdenes()){
+            System.out.println(orden.getProducto().getNombre()+"\n"
+                    + "inicio cola = "+orden.getT_inicio_cola()+""
+                    + "fin cola ="+orden.getT_fin_cola()+""
+                    + "entrega ="+orden.getT_entrega());
+        }
+        
+    }
+    //*************************************************************************
+    private Time getMaxTimeEntrega(Cliente cliente){
+        LocalTime timeMax = new LocalTime(0,0,0);
+        for(Orden or:cliente.getOrdenes()){
+            LocalTime tmp = new LocalTime(or.getT_entrega().getTime());
+            if(tmp.getHourOfDay()>timeMax.getHourOfDay())
+                timeMax=tmp;
+            else{
+                if(tmp.getHourOfDay() == timeMax.getHourOfDay()){
+                    if(tmp.getMinuteOfHour()>timeMax.getMinuteOfHour())
+                        timeMax = tmp;
+                    else{
+                        if(tmp.getMinuteOfHour() == timeMax.getMinuteOfHour()){
+                            if(tmp.getSecondOfMinute() >= timeMax.getSecondOfMinute())
+                                timeMax = tmp;
+                        }
+                    }
+                }
+                else
+                    continue;
+            }
+        }
+        return new Time(timeMax.getHourOfDay(), timeMax.getMinuteOfHour(), timeMax.getSecondOfMinute());
+    }
+    
+    private void revisionClientes(){
+        for(Cliente cli : espera){
+            if(cli.getEstado() != EstadoCliente.COMIENDO){
+                for(Orden or : cli.getOrdenes()){
+                    
+                    if(or.getEstado() == EstadoOrden.COLA){
+                        Time t = or.getT_inicio_cola();
+                        LocalTime lt = new LocalTime(t.getTime());
+                        lt.plusMinutes(6);//Tiempo promedio de duracion en cola
+                        or.setT_fin_cola(new Time(lt.getHourOfDay(), lt.getMinuteOfHour(), lt.getSecondOfMinute()));
+                        lt.plusMinutes(or.getProducto().getTiempo_max_prep());
+                        or.setT_entrega(new Time(lt.getHourOfDay(), lt.getMinuteOfHour(), lt.getSecondOfMinute()));
+                        or.setEstado(EstadoOrden.LISTA);
+                        System.out.println("Se entrego una orden ");
+                    }
+                    or.setEstado(EstadoOrden.ENTREGADO);
+                    
+                }
+                LocalTime lt = new LocalTime(getMaxTimeEntrega(cli).getTime());
+                cli.getVisita().setHora_entrega(getMaxTimeEntrega(cli));
+                cli.setEstado(EstadoCliente.CONORDEN);
+                //Aqui se decide si es para llevar o no
+                cli.setEstado(EstadoCliente.COMIENDO);
+                //Para este tiempo se puede aplicar una dist. Exponencial dependiendo la cantidad de ordenes que tiene
+                lt = lt.plusMinutes(Utilities.intRand(5, 30));
+                cli.getVisita().setHora_fin_comer(new Time(lt.getHourOfDay(),lt.getMinuteOfHour(),lt.getSecondOfMinute()));
+                System.out.println("Cliente comiendo ");
+                for(Cliente clie2 :parados){
+                    if(clie2 == cli){
+                        parados.changeStatus(EstadoCliente.COMIENDO, clie2);
+                        System.out.println("pintado");
+                        
+                    }
+                }
+
+                for(Cliente clie2 :sentados){
+                    if(clie2 == cli){
+                        sentados.changeStatus(EstadoCliente.COMIENDO, clie2);
+                        System.out.println("Pintado");
+      
+                    }
+                }
+            }
+        }
+    }
     private class HiloLlegada implements Runnable{
         @Override
         public void run() 
@@ -587,7 +818,7 @@ public class frm_principal extends javax.swing.JFrame {
                Double tiempo = -miu * Math.log(rand);
                System.out.println("Random  "+rand+"  tiempo ="+tiempo+" Hora ="+time.toString());
                int milis = (int)(tiempo * 60000);
-               time = time.plusMillis(milis);
+               //time = time.plusMillis(milis);
                int escala = milis / denominador_tiempo;
                try {
                    sleep(escala);
@@ -699,7 +930,7 @@ public class frm_principal extends javax.swing.JFrame {
                 if(!llegadas.isEmpty()){
                     countSalida=0;
                     Cliente cliente = llegadas.get(0);
-                    
+                    cliente.getVisita().setHora_orden(new Time(time.getHourOfDay(),time.getMinuteOfHour(),time.getSecondOfMinute()));
                     float rand = Utilities.floatRand(0, 1);
                     int cantidad_ordenes = buscarCantOrdenes(rand);
                     for(int x=0;x<cantidad_ordenes;x++){
@@ -764,36 +995,42 @@ public class frm_principal extends javax.swing.JFrame {
             
             Cliente clie = getCliente(orden);
                     
-                    if(clie != null){//Se encontro la orden que se preparo
-                        orden.setEstado(EstadoOrden.LISTA);
-                        ordenes_pendientes.remove();
-                        
-                        boolean todoListo = true;
-                        for(Orden or2 : clie.getOrdenes()){
-                            if(!(or2.getEstado()== EstadoOrden.LISTA))
-                                todoListo = false;
-                        }
-                        if(todoListo){
-                            for(Orden or2 : clie.getOrdenes()){
-                                or2.setEstado(EstadoOrden.ENTREGADO);
-                            }
-                            clie.setEstado(EstadoCliente.COMIENDO);
-                           
-                            for(Cliente clie2 :parados){
-                                if(clie2 == clie){
-                                    parados.changeStatus(EstadoCliente.COMIENDO, clie2);
-                                    return ;
-                                }
-                            }
-                            
-                            for(Cliente clie2 :sentados){
-                                if(clie2 == clie){
-                                    sentados.changeStatus(EstadoCliente.COMIENDO, clie2);
-                                    return ;
-                                }
-                            }
+            if(clie != null){//Se encontro la orden que se preparo
+                orden.setEstado(EstadoOrden.LISTA);
+                ordenes_pendientes.remove();
+
+                boolean todoListo = true;
+                for(Orden or2 : clie.getOrdenes()){
+                    if(!(or2.getEstado()== EstadoOrden.LISTA))
+                        todoListo = false;
+                }
+                if(todoListo){
+                    for(Orden or2 : clie.getOrdenes()){
+                        or2.setEstado(EstadoOrden.ENTREGADO);
+                    }
+                    clie.getVisita().setHora_entrega(new Time(time.getHourOfDay(),time.getMinuteOfHour(),time.getSecondOfMinute()));
+                    //Aqui se decide si es para llevar o comer aqui..
+                    clie.setEstado(EstadoCliente.COMIENDO);
+                    
+                    //Para este tiempo se puede aplicar una dist. Exponencial dependiendo la cantidad de ordenes que tiene
+                    LocalTime lt = time.plusMinutes(Utilities.intRand(5, 30));
+                    clie.getVisita().setHora_fin_comer(new Time(lt.getHourOfDay(),lt.getMinuteOfHour(),lt.getSecondOfMinute()));
+                    
+                    for(Cliente clie2 :parados){
+                        if(clie2 == clie){
+                            parados.changeStatus(EstadoCliente.COMIENDO, clie2);
+                            return ;
                         }
                     }
+
+                    for(Cliente clie2 :sentados){
+                        if(clie2 == clie){
+                            sentados.changeStatus(EstadoCliente.COMIENDO, clie2);
+                            return ;
+                        }
+                    }
+                }
+            }
                 
             
         }
@@ -806,28 +1043,29 @@ public class frm_principal extends javax.swing.JFrame {
                if(!ordenes_pendientes.isEmpty()){
                     countSalida=0;
                     Orden orden = ordenes_pendientes.get(0);
-
+                    orden.setT_fin_cola(new Time(time.getHourOfDay(), time.getMinuteOfHour(), time.getSecondOfMinute()));
                     int minPreparacion = Utilities.intRand(
                             orden.getProducto().getTiempo_min_prep(),
                             orden.getProducto().getTiempo_max_prep());
+                    LocalTime tiempoEntrega = time.plusMinutes(minPreparacion);
+                    LocalTime lt = time.plusMinutes(minPreparacion);
+                    orden.setT_entrega(new Time(lt.getHourOfDay(), lt.getMinuteOfHour(), lt.getSecondOfMinute()));
                     long milis = (minPreparacion * 60000)/denominador_tiempo ;
                    
-                   try {
+                    try {
                        /*System.out.println("Minutos Min = "+orden.getProducto().getTiempo_min_prep()+" Min Max= "+orden.getProducto().getTiempo_max_prep());
                        System.out.println("Minutos prepa = "+minPreparacion);
                        System.out.println("Milis = "+milis);*/
+                       //System.out.println("Plato Preparado = " +orden.getProducto().getNombre());
+                    
+                       sleep(milis);
                        buscarCliente(orden);
                    } catch (InterruptedException ex) {
                        Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
                    }
                    
                     
-                    //System.out.println("Plato Preparado = " +orden.getProducto().getNombre());
-                    try {
-                        sleep(milis);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    
                }
                else{
                    try {
@@ -956,27 +1194,28 @@ public class frm_principal extends javax.swing.JFrame {
     
     private class Reloj extends SwingWorker<Object, Integer>{
         
-        LocalTime timeReloj;
+        //LocalTime timeReloj;
         
         Reloj(){
-            timeReloj = new LocalTime(7,0,0);//Apertura
+            time = new LocalTime(7,0,0);//Apertura
         }
  
 
         @Override
         protected Object doInBackground() throws Exception {
-            while(timeReloj.getHourOfDay()<12){
-                int milis= 1800000/denominador_tiempo;
+            while(time.getHourOfDay()<12){
+                int milis= 1000/denominador_tiempo;
+                
+                sleep(milis, 0);
                 publish(milis);
-                sleep(milis);
             }
             return null;
         }
         
         @Override
         protected void process(List<Integer> chunk){
-            timeReloj = timeReloj.plusMillis(1800000);//Medio minito
-            lblTiempo.setText(timeReloj.getHourOfDay()+":"+timeReloj.getMinuteOfHour()+":"+timeReloj.getSecondOfMinute());
+            time = time.plusMillis(150000);//Medio minito
+            lblTiempo.setText(time.getHourOfDay()+":"+time.getMinuteOfHour()+":"+time.getSecondOfMinute());
         }
     
     }
