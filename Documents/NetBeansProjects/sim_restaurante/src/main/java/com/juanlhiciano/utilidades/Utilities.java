@@ -66,5 +66,10 @@ public class Utilities {
 
     }
 
+    public static Double getExponencialTime(float miu){
+        Double rand_llegada = Utilities.doubleRand(0, 1);
+        Double tiempo_llegada = -miu * Math.log(rand_llegada);
+        return tiempo_llegada;
+    }
 
 }

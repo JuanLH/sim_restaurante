@@ -9,6 +9,7 @@ import com.juanlhiciano.database.Db;
 import com.juanlhiciano.utilidades.Utilities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -108,10 +109,13 @@ public class Producto {
     }
     
     public Producto findProducto(ArrayList<Producto> lista, float rand){
+        DecimalFormat df = new DecimalFormat("#.####");
+        rand = Float.parseFloat(df.format(rand));
         for(Producto p:lista){
             if(p.getRango_inicial()<=rand && p.getRango_final()>=rand)
                 return p;
         }
+        System.out.println("Random = "+rand);   
         return null;
     }
     

@@ -627,55 +627,120 @@ public class frm_principal extends javax.swing.JFrame {
     
     
     private void generarTiempos(){
-        LocalTime clock = new LocalTime(7, 0, 0);
+        LocalTime clock = new LocalTime(hora_abrir);
         HiloMesero mesero = new HiloMesero();
         
-        if(clientesG.isEmpty()){
-            Cliente cli = new Cliente(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
-            int tiempo_orden = Utilities.intRand(2,8);
-            clock = clock.plusMinutes(tiempo_orden);
-            cli.getVisita().setHora_orden(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
-            int cant_ordenes = mesero.buscarCantOrdenes(Utilities.floatRand(0, 1));
-            AgregarOrdenes(cli,cant_ordenes,clock);
+        while(clock.getHourOfDay()<hora_cerrar.getHourOfDay()){
+            float miu_llegada = 1.8f;
+            Double tiempo_llegada = Utilities.getExponencialTime(miu_llegada);
+            clock = clock.plusMillis((int) (tiempo_llegada * 60000));
+            if(clock.getHourOfDay()>=12)//cliente llego tarde , el negocio se cerro
+                break;
             
-            Time hEntrega = getMaxTimeEntrega(cli);
-            clock = new LocalTime(hEntrega.getTime());
-            cli.getVisita().setHora_entrega(hEntrega);
-            int tiempoComer = Utilities.intRand(5, 12);
-            clock = clock.plusMinutes(tiempoComer);
-            cli.getVisita().setHora_fin_comer(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
-            
-            //Distribucion exponencial para el tiempo de salida
-            Double rand = Utilities.doubleRand(0, 1);
-            Double miu = 4.8;
-            Double tiempo = -miu * Math.log(rand);
-            clock = clock.plusMillis((int) (tiempo * 60000));
-            cli.getVisita().setHora_salida(new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
-            clientesG.add(cli);
+            LocalTime cocina_clock = new LocalTime(clock);
+            //if(clientesG.isEmpty()){
+                Cliente cli = new Cliente(new Time(cocina_clock.getHourOfDay(),cocina_clock.getMinuteOfHour(),cocina_clock.getSecondOfMinute()));
+                //Para el tiempo de orden se le suma 2 minutos a la ultima
+                Time hora_orden = getHoraOrden(cocina_clock,cli);
+                cli.getVisita().setHora_orden(hora_orden);
+                cocina_clock = new LocalTime(hora_orden.getTime());
+                int cant_ordenes = mesero.buscarCantOrdenes(Utilities.floatRand(0, 1));
+                //System.out.println("Hora "+clock);
+                AgregarOrdenes(cli,cant_ordenes,cocina_clock);
+                Time hEntrega = getMaxTimeEntrega(cli);
+                cocina_clock = new LocalTime(hEntrega.getTime());
+                cli.getVisita().setHora_entrega(hEntrega);
+                int tiempoComer = Utilities.intRand(5, 12);
+                cocina_clock = cocina_clock.plusMinutes(tiempoComer);
+                cli.getVisita().setHora_fin_comer(new Time(cocina_clock.getHourOfDay(),cocina_clock.getMinuteOfHour(),cocina_clock.getSecondOfMinute()));
+
+                //Distribucion exponencial para el tiempo de salida
+                Double rand = Utilities.doubleRand(0, 1);
+                Double miu = 4.8;
+                Double tiempo = -miu * Math.log(rand);
+                cocina_clock = cocina_clock.plusMillis((int) (tiempo * 60000));
+                cli.getVisita().setHora_salida(new Time(cocina_clock.getHourOfDay(),cocina_clock.getMinuteOfHour(),cocina_clock.getSecondOfMinute()));
+                clientesG.add(cli);
+            /*}
+            else{
+                
+            }*/
         }
-        else{
-        
-        }
-        
-        System.out.println("Cliente \n"
-                + "Hora llegada = "+clientesG.get(0).getVisita().getHora_llegada()+"\n"
-                + "Hora orden = "+clientesG.get(0).getVisita().getHora_orden()+"\n"
-                + "Hora Entrega = "+clientesG.get(0).getVisita().getHora_entrega()+"\n"
-                + "Hora termino comida = "+clientesG.get(0).getVisita().getHora_fin_comer()+"\n"
-                + "Hora Salida = "+clientesG.get(0).getVisita().getHora_salida()+"\n");
-        for(Orden orden : clientesG.get(0).getOrdenes()){
-            System.out.println(orden.getProducto().getNombre()+"\n"
-                    + "inicio cola = "+orden.getT_inicio_cola()+""
-                    + "fin cola ="+orden.getT_fin_cola()+""
-                    + "entrega ="+orden.getT_entrega());
+        for(int x=0;x<clientesG.size();x++){
+            System.out.println("Cliente \n"
+                    + "Hora llegada = "+clientesG.get(x).getVisita().getHora_llegada()+"\n"
+                    + "Hora orden = "+clientesG.get(x).getVisita().getHora_orden()+"\n"
+                    + "Hora Entrega = "+clientesG.get(x).getVisita().getHora_entrega()+"\n"
+                    + "Hora termino comida = "+clientesG.get(x).getVisita().getHora_fin_comer()+"\n"
+                    + "Hora Salida = "+clientesG.get(x).getVisita().getHora_salida()+"\n");
+            for(Orden orden : clientesG.get(x).getOrdenes()){
+                System.out.println(orden.getProducto().getNombre()+"\n"
+                        + "inicio cola = "+orden.getT_inicio_cola()+" "
+                        + "fin cola = "+orden.getT_fin_cola()+" "
+                        + "entrega = "+orden.getT_entrega());
+            }
         }
         
     }
     
+    public Time getHoraOrden(LocalTime clock,Cliente cli){
+        Cliente ultimo_cola;
+        
+        if(clientesG.isEmpty()){//si esta vacia no hay nadie 
+            clock = clock.plusMinutes(2);
+            return new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute());
+        }
+        else{
+            ultimo_cola = clientesG.get(clientesG.size()-1);
+        }
+        
+        LocalTime ultima_orden = new LocalTime(ultimo_cola.getVisita().getHora_orden());
+        LocalTime tiempo_llegada = new LocalTime(cli.getVisita().getHora_llegada());
+        if(esMenorIgualTime(ultima_orden ,tiempo_llegada)){//t1 <= t2
+            tiempo_llegada = tiempo_llegada.plusMinutes(2);
+            clock = tiempo_llegada;
+            return new Time(tiempo_llegada.getHourOfDay()
+                    ,tiempo_llegada.getMinuteOfHour()
+                    ,tiempo_llegada.getSecondOfMinute());
+        }
+        else{
+            ultima_orden = ultima_orden.plusMinutes(2);
+            clock = ultima_orden;
+            return new Time(ultima_orden.getHourOfDay()
+                    ,ultima_orden.getMinuteOfHour()
+                    ,ultima_orden.getSecondOfMinute());
+        }
+        
+    }
+    
+    private boolean esMenorIgualTime(LocalTime t1,LocalTime t2){
+        
+        if(t1.getHourOfDay()<t2.getHourOfDay()){
+                return true;
+            }
+            else{
+                if(t1.getHourOfDay() == t2.getHourOfDay()){
+                    if(t1.getMinuteOfHour()<t2.getMinuteOfHour()){
+                        return true;
+                    }
+                    else{
+                        if(t1.getMinuteOfHour() == t2.getMinuteOfHour()){
+                            if(t1.getSecondOfMinute() <= t2.getSecondOfMinute()){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        return false;
+    }
+    
     public void AgregarOrdenes(Cliente cli,int cant_ordenes,LocalTime clock){
+        System.out.println("---------------------*** ----- Hora llegada  = "+cli.getVisita().getHora_llegada());
         for(int x=0;x<cant_ordenes;x++){
             float rand2 = Utilities.floatRand(0, 1);
             Producto prod = productos.findProducto(listaProductos, rand2);
+            System.out.println("Producto = "+prod.getNombre());
             Orden or = new Orden(prod,new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
 
 
@@ -684,16 +749,30 @@ public class frm_principal extends javax.swing.JFrame {
                         or.getProducto().getTiempo_min_prep(),
                         or.getProducto().getTiempo_max_prep());
                 LocalTime cocinaClock = new LocalTime(clock);
-                System.out.println("Tiempo original -->"+clock);
-                System.out.println("Tiempo copiado -->"+cocinaClock);
                 switch(or.getProducto().getId_tipo_producto()){
                     case 1://Plancha
                         List<Orden> orPlancha = ListaConMenorCola(1);
                         if(!orPlancha.isEmpty()){
                             //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
                             Time finCola = orPlancha.get(orPlancha.size()-1).getT_entrega();
-                            or.setT_fin_cola(finCola);
-                            cocinaClock = new LocalTime(finCola.getTime());
+                            LocalTime fCola = new LocalTime(finCola.getTime());
+                            LocalTime iCola = new LocalTime(or.getT_inicio_cola());
+                            /*
+                            Si el tiempo de fin de cola de la orden anterior es menor al de inicio de la orden 
+                            actual se pondra como fin de cola el de inicio actual de lo contrario
+                            se tomara como fin cola el final del la orden anterior ....
+                            */
+                            if(esMenorIgualTime(fCola,iCola)){
+                                or.setT_fin_cola(new Time(iCola.getHourOfDay(),iCola.getMinuteOfHour(),iCola.getSecondOfMinute()));
+                                cocinaClock = iCola;
+                            }
+                            else
+                            {
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = fCola;
+                            }
+                            
+                            
                             cocinaClock = cocinaClock.plusMinutes(minPreparacion);
                             or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
                             orPlancha.add(or);
@@ -711,8 +790,24 @@ public class frm_principal extends javax.swing.JFrame {
                         if(!orHd.isEmpty()){
                             //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
                             Time finCola = orHd.get(orHd.size()-1).getT_entrega();
-                            or.setT_fin_cola(finCola);
-                            cocinaClock = new LocalTime(finCola.getTime());
+                            LocalTime fCola = new LocalTime(finCola.getTime());
+                            LocalTime iCola = new LocalTime(or.getT_inicio_cola());
+                            /*
+                            Si el tiempo de fin de cola de la orden anterior es menor al de inicio de la orden 
+                            actual se pondra como fin de cola el de inicio actual de lo contrario
+                            se tomara como fin cola el final del la orden anterior ....
+                            */
+                            if(esMenorIgualTime(fCola,iCola)){
+                                or.setT_fin_cola(new Time(iCola.getHourOfDay(),iCola.getMinuteOfHour(),iCola.getSecondOfMinute()));
+                                cocinaClock = iCola;
+                            }
+                            else
+                            {
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = fCola;
+                            }
+                            
+                            
                             cocinaClock = cocinaClock.plusMinutes(minPreparacion);
                             or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
                             orHd.add(or);
@@ -730,8 +825,24 @@ public class frm_principal extends javax.swing.JFrame {
                         if(!orYaroa.isEmpty()){
                             //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
                             Time finCola = orYaroa.get(orYaroa.size()-1).getT_entrega();
-                            or.setT_fin_cola(finCola);
-                            cocinaClock = new LocalTime(finCola.getTime());
+                            LocalTime fCola = new LocalTime(finCola.getTime());
+                            LocalTime iCola = new LocalTime(or.getT_inicio_cola());
+                            /*
+                            Si el tiempo de fin de cola de la orden anterior es menor al de inicio de la orden 
+                            actual se pondra como fin de cola el de inicio actual de lo contrario
+                            se tomara como fin cola el final del la orden anterior ....
+                            */
+                            if(esMenorIgualTime(fCola,iCola)){
+                                or.setT_fin_cola(new Time(iCola.getHourOfDay(),iCola.getMinuteOfHour(),iCola.getSecondOfMinute()));
+                                cocinaClock = iCola;
+                            }
+                            else
+                            {
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = fCola;
+                            }
+                            
+                            
                             cocinaClock = cocinaClock.plusMinutes(minPreparacion);
                             or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
                             orYaroa.add(or);
@@ -749,8 +860,24 @@ public class frm_principal extends javax.swing.JFrame {
                         if(!orBbq.isEmpty()){
                             //El tiempo de fin de cola es el tiempo de entrega del ultimo producto de la cola
                             Time finCola = orBbq.get(orBbq.size()-1).getT_entrega();
-                            or.setT_fin_cola(finCola);
-                            cocinaClock = new LocalTime(finCola.getTime());
+                            LocalTime fCola = new LocalTime(finCola.getTime());
+                            LocalTime iCola = new LocalTime(or.getT_inicio_cola());
+                            /*
+                            Si el tiempo de fin de cola de la orden anterior es menor al de inicio de la orden 
+                            actual se pondra como fin de cola el de inicio actual de lo contrario
+                            se tomara como fin cola el final del la orden anterior ....
+                            */
+                            if(esMenorIgualTime(fCola,iCola)){
+                                or.setT_fin_cola(new Time(iCola.getHourOfDay(),iCola.getMinuteOfHour(),iCola.getSecondOfMinute()));
+                                cocinaClock = iCola;
+                            }
+                            else
+                            {
+                                or.setT_fin_cola(finCola);
+                                cocinaClock = fCola;
+                            }
+                            
+                            
                             cocinaClock = cocinaClock.plusMinutes(minPreparacion);
                             or.setT_entrega(new Time(cocinaClock.getHourOfDay(),cocinaClock.getMinuteOfHour(),cocinaClock.getSecondOfMinute()));
                             orBbq.add(or);
@@ -794,39 +921,47 @@ public class frm_principal extends javax.swing.JFrame {
     
     public List<Orden> MenorCola(List<Orden>[] listas){
         List<Orden> menorCola = null;
-        LocalTime timeMin = new LocalTime(hora_cerrar);
+        LocalTime timeMin = new LocalTime(23,0,0);
+        
         for(int x=0;x<listas.length;x++){
+            System.out.println("Entro al for------------------------------------------");
+            System.out.println(">>Tiempo Min Inicio For  ="+timeMin);
             if(listas[x].isEmpty())
                 return listas[x];
             else{
                 Orden ultima = listas[x].get(listas[x].size()-1);
                 LocalTime tmp = new LocalTime(ultima.getT_entrega().getTime());
+                System.out.println("Ultima orden = "+tmp+" ,Tiempo minimo "+timeMin);
                 if(tmp.getHourOfDay()<timeMin.getHourOfDay()){
                     timeMin=tmp;
+                    System.out.println("Tiempo Min -Reducido ="+timeMin);
                     menorCola = listas[x];
                 }
                 else{
                     if(tmp.getHourOfDay() == timeMin.getHourOfDay()){
                         if(tmp.getMinuteOfHour()<timeMin.getMinuteOfHour()){
                             timeMin = tmp;
+                            System.out.println("Tiempo Min -Reducido ="+timeMin);
                             menorCola = listas[x];
+                            
                         }
                         else{
                             if(tmp.getMinuteOfHour() == timeMin.getMinuteOfHour()){
                                 if(tmp.getSecondOfMinute() <= timeMin.getSecondOfMinute()){
                                     timeMin = tmp;
+                                    System.out.println("Tiempo Min -Reducido ="+timeMin);
                                     menorCola = listas[x];
+                                    
                                 }
                             }
                         }
                     }
-                    else
-                        continue;
                 }
                 
             }
-            
+            System.out.println("Tiempo Min Final For  ="+timeMin);
         }
+        System.out.println("Salio del for------------------------------------------");
         return menorCola;
     }
     //*************************************************************************
