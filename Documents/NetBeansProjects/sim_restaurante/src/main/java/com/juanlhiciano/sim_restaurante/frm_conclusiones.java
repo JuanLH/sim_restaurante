@@ -7,6 +7,9 @@
 package com.juanlhiciano.sim_restaurante;
 
 import com.juanlhiciano.database.Db;
+import com.juanlhiciano.entidades.Dia;
+import com.juanlhiciano.entidades.Preparacion;
+import com.juanlhiciano.entidades.Simulacion;
 import com.juanlhiciano.entidades.Visita;
 import com.juanlhiciano.utilidades.Utilities;
 import java.sql.ResultSet;
@@ -15,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.joda.time.LocalTime;
 
 /**
  *
@@ -22,9 +28,19 @@ import java.util.logging.Logger;
  */
 public class frm_conclusiones extends javax.swing.JFrame {
 
-    /** Creates new form frm_conclusiones */
+    ArrayList<Dia> dias;
     public frm_conclusiones() {
         initComponents();
+        
+        try {
+            dias = Dia.getDias();
+            cmb_dias.removeAllItems();
+            dias.forEach((dia) -> {
+                cmb_dias.addItem(dia.toString());
+            });
+        } catch (SQLException ex) {
+            Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -75,6 +91,8 @@ public class frm_conclusiones extends javax.swing.JFrame {
         txt_prep_hd = new javax.swing.JTextField();
         txt_prep_yaroa = new javax.swing.JTextField();
         txt_prep_bbq = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        lbl_cant_simulaciones = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -234,7 +252,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(txt_avg_salir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(204, 153, 0));
@@ -255,7 +273,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -268,7 +286,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
         txt_ocio_plancha.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel12.setText("TIEMPO DE OCIO AL  DIA(MIN):");
+        jLabel12.setText("PROM .TIEMPO DE OCIO AL  DIA(MIN):");
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel13.setText("HOT DOG");
@@ -286,7 +304,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
         jLabel15.setText("BBQ");
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel16.setText("TOTAL DE PROD. PREPARADOS AL DIA:");
+        jLabel16.setText("PROM. DEL TOTAL DE PROD. PREPARADOS AL DIA:");
 
         txt_prep_plancha.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
@@ -306,29 +324,29 @@ public class frm_conclusiones extends javax.swing.JFrame {
                     .addComponent(jLabel16)
                     .addComponent(jLabel12))
                 .addGap(28, 28, 28)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txt_prep_plancha, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                    .addComponent(jLabel11)
+                    .addComponent(txt_ocio_plancha))
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ocio_plancha, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11))
-                        .addGap(26, 26, 26)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_ocio_hd, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel13)))
+                            .addComponent(jLabel13)
+                            .addComponent(txt_ocio_hd, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(txt_prep_plancha, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
-                        .addComponent(txt_prep_hd, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_prep_yaroa, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_ocio_yaroa, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_prep_bbq, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_ocio_bbq, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
+                        .addGap(9, 9, 9)
+                        .addComponent(txt_prep_hd, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel14)
+                    .addComponent(txt_ocio_yaroa, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                    .addComponent(txt_prep_yaroa))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel15)
+                    .addComponent(txt_ocio_bbq, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                    .addComponent(txt_prep_bbq))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -359,17 +377,24 @@ public class frm_conclusiones extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txt_prep_plancha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel16))
-                    .addComponent(txt_prep_hd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txt_prep_bbq, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txt_prep_yaroa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txt_prep_yaroa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_prep_hd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel17.setText("CANTIDAD DE SIMULACIONES QUE COINCIDEN:");
+
+        lbl_cant_simulaciones.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbl_cant_simulaciones.setText("?");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,7 +403,11 @@ public class frm_conclusiones extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addGap(18, 18, 18)
+                        .addComponent(lbl_cant_simulaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -386,22 +415,37 @@ public class frm_conclusiones extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(lbl_cant_simulaciones))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addGap(21, 21, 21))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_verActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_verActionPerformed
+        limpiar_txt();
         Db dbase = Utilities.getConection();
         ResultSet rs=null;
-        if(cmb_opciones.getSelectedIndex() == 0){
+        if(cmb_opciones.getSelectedIndex() == 0){//Ultima Simulacion
+            try {
+                Simulacion sim = Simulacion.getLastSimulation(dbase);
+                cmb_dias.setSelectedIndex(sim.getId_dia());
+                txt_cant_plancha.setText(sim.getCant_coci_plancha()+"");
+                txt_cant_hd.setText(sim.getCant_coci_hd()+"");
+                txt_cant_yaroa.setText(sim.getCant_coci_yaroa()+"");
+                txt_cant_bbq.setText(sim.getCant_coci_bbq()+"");
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
             String cant_visit_ultima = 
                 "SELECT v.id_simulacion,count(*) as visitas "
                     + "FROM public.visita as v where "
@@ -415,7 +459,33 @@ public class frm_conclusiones extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
             }
+            String top_productos = "Select pro.nombre,count(*) as cantidad "
+                    + "from Producto as pro inner join preparaciones as pre\n" +
+                    "on pro.id = pre.id_producto inner join cocineros as co\n" +
+                    "on co.id = pre.id_cocinero inner join simulacion as sim\n" +
+                    "on sim.id = co.id_simulacion where sim.id="
+                    + "(select id from simulacion order by id desc limit 1)\n" +
+                    "group by pro.nombre order by cantidad desc;";
+            DefaultTableModel modelo = new DefaultTableModel();
+            String [] col = {"NOMBRE","CANTIDAD"};
+            for (int i=0;i<col.length;i++)
+                modelo.addColumn(col[i]);
             
+            
+            try {
+                rs  = dbase.execSelect(top_productos);
+                int k;
+                while(rs.next()){
+                    k=0;
+                    Object[] fila = new Object[2];
+                    fila[k++] = (Object)rs.getString(1);
+                    fila[k++] = (Object)rs.getInt(2);
+                    modelo.addRow(fila);
+                }
+                tb_productos.setModel(modelo);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
             String visitas_ultima = "SELECT v.id,v.id_simulacion,v.hora_llegada"
                     + ",v.hora_orden,v.hora_entrega,v.hora_comida"
                     + ",v.hora_salida FROM public.visita as v "
@@ -440,23 +510,444 @@ public class frm_conclusiones extends javax.swing.JFrame {
             }
             llenarInfoClientes(list_visitas);
             
-            String plancha_cocineros_ultima = "SELECT s.id as id_simulacion"
-                    + ",p.id,p.id_cocinero,p.id_producto,p.t_inicio_cola"
+            String plancha_cocineros_ultima = "SELECT s.id as id_simulacion,"
+                    + "p.id,p.id_cocinero,p.id_producto,p.t_inicio_cola"
                     + ",p.t_fin_cola,p.t_entrega FROM cocineros as c inner join simulacion as s\n" +
                     "on c.id_simulacion = s.id inner join preparaciones as p \n" +
-                    "on p.id_cocinero = c.id where c.id_tipo_cocinero = 1 \n" +
+                    "on p.id_cocinero = c.id where c.id_tipo_cocinero = 1 \n" + 
                     "and s.id = (select id from simulacion order by id desc limit 1);";
+            String hd_cocineros_ultima = "SELECT s.id as id_simulacion,"
+                    + "p.id,p.id_cocinero,p.id_producto,p.t_inicio_cola"
+                    + ",p.t_fin_cola,p.t_entrega FROM cocineros as c inner join simulacion as s\n" +
+                    "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                    "on p.id_cocinero = c.id where c.id_tipo_cocinero = 2 \n" +
+                    "and s.id = (select id from simulacion order by id desc limit 1);";
+            String yaroa_cocineros_ultima = "SELECT s.id as id_simulacion,"
+                    + "p.id,p.id_cocinero,p.id_producto,p.t_inicio_cola"
+                    + ",p.t_fin_cola,p.t_entrega FROM cocineros as c inner join simulacion as s\n" +
+                    "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                    "on p.id_cocinero = c.id where c.id_tipo_cocinero = 3 \n" +
+                    "and s.id = (select id from simulacion order by id desc limit 1);";
+            String bbq_cocineros_ultima = "SELECT s.id as id_simulacion,"
+                    + "p.id,p.id_cocinero,p.id_producto,p.t_inicio_cola"
+                    + ",p.t_fin_cola,p.t_entrega FROM cocineros as c inner join simulacion as s\n" +
+                    "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                    "on p.id_cocinero = c.id where c.id_tipo_cocinero = 3 \n" +
+                    "and s.id = (select id from simulacion order by id desc limit 1);";
+            ArrayList<Preparacion> list_prep_plancha = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(plancha_cocineros_ultima);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_plancha.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_plancha,1);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_hd = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(hd_cocineros_ultima);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_hd.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_hd,2);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_yaroa = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(yaroa_cocineros_ultima);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_yaroa.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_yaroa,3);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_bbq = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(bbq_cocineros_ultima);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_bbq.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_bbq,4);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        else{
-        
+        else{//--------------------CONSULTA PERSONALIZADA-----------------------
+            String pro_cant_visit = "SELECT avg(S.visitas) as promedio \n" +
+                "FROM (SELECT COUNT(v.*) as visitas  FROM public.visita as v inner join simulacion as s\n" +
+                "on s.id = v.id_simulacion where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+" \n" +
+                "group by v.id_simulacion)as S;";
+            try {
+                rs = dbase.execSelect(pro_cant_visit);
+                if(rs.next())
+                    txt_avg_visitas.setText(rs.getDouble("promedio")+"");  
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            String visitas = "SELECT  v.id,v.id_simulacion"
+                    + ",v.hora_llegada,v.hora_orden,v.hora_entrega"
+                    + ",v.hora_comida,v.hora_salida  "
+                    + "FROM public.visita as v inner join simulacion as s\n" +
+                "on s.id = v.id_simulacion where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+";";
+            System.out.println(visitas);
+            ArrayList<Visita> list_visitas = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(visitas);
+                while(rs.next()){
+                    Visita visita = new Visita();
+                    visita.setId(rs.getInt(1));
+                    visita.setId_simulacion(rs.getInt(2));
+                    visita.setHora_llegada(rs.getTime(3));
+                    visita.setHora_orden(rs.getTime(4));
+                    visita.setHora_entrega(rs.getTime(5));
+                    visita.setHora_fin_comer(rs.getTime(6));
+                    visita.setHora_salida(rs.getTime(7));
+                    list_visitas.add(visita);
+                }
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(list_visitas.isEmpty()){
+                JOptionPane.showMessageDialog(this, "Aun no hay simulaciones con estas caracteristicas");
+                return ;
+            }
+            llenarInfoClientes(list_visitas);
+            
+            String top_productos = "Select pro.nombre,count(*) as cantidad "
+                    + "from Producto as pro inner join preparaciones as pre\n" +
+                    "on pro.id = pre.id_producto inner join cocineros as co\n" +
+                    "on co.id = pre.id_cocinero inner join simulacion as sim\n" +
+                    "on sim.id = co.id_simulacion where sim.id_dia ="+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                    "and sim.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                    "and sim.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                    "and sim.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                    "and sim.cant_coci_bbq = "+txt_cant_bbq.getText()+" group by pro.nombre order by cantidad desc;";
+            DefaultTableModel modelo = new DefaultTableModel();
+            String [] col = {"NOMBRE","CANTIDAD"};
+            for (int i=0;i<col.length;i++)
+                modelo.addColumn(col[i]);
+           
+            try {
+                rs  = dbase.execSelect(top_productos);
+            
+                int k;
+                while(rs.next()){
+                    k=0;
+                    Object[] fila = new Object[2];
+                    fila[k++] = (Object)rs.getString(1);
+                    fila[k++] = (Object)rs.getInt(2);
+                    modelo.addRow(fila);
+                }
+                tb_productos.setModel(modelo);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            String plancha_cocineros = "SELECT s.id as id_simulacion,p.id,p.id_cocinero,p.id_producto,"
+                    + "p.t_inicio_cola,p.t_fin_cola,p.t_entrega "
+                    + "FROM cocineros as c inner join simulacion as s\n" +
+                "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                "on p.id_cocinero = c.id where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+" \n" +
+                "and c.id_tipo_cocinero = 1;";
+            String hd_cocineros = "SELECT s.id as id_simulacion,p.id,p.id_cocinero,p.id_producto,"
+                    + "p.t_inicio_cola,p.t_fin_cola,p.t_entrega "
+                    + "FROM cocineros as c inner join simulacion as s\n" +
+                "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                "on p.id_cocinero = c.id where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+" \n" +
+                "and c.id_tipo_cocinero = 2;";
+            String yaroa_cocineros = "SELECT s.id as id_simulacion,p.id,p.id_cocinero,p.id_producto,"
+                    + "p.t_inicio_cola,p.t_fin_cola,p.t_entrega "
+                    + "FROM cocineros as c inner join simulacion as s\n" +
+                "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                "on p.id_cocinero = c.id where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+" \n" +
+                "and c.id_tipo_cocinero = 3;";
+            String bbq_cocineros = "SELECT s.id as id_simulacion,p.id,p.id_cocinero,"
+                    + "p.id_producto,p.t_inicio_cola,p.t_fin_cola,p.t_entrega "
+                    + "FROM cocineros as c inner join simulacion as s\n" +
+                "on c.id_simulacion = s.id inner join preparaciones as p \n" +
+                "on p.id_cocinero = c.id where s.id_dia = "+(cmb_dias.getSelectedIndex()+1)+" \n" +
+                "and s.cant_coci_plancha = "+txt_cant_plancha.getText()+" \n" +
+                "and s.cant_coci_yaroa = "+txt_cant_yaroa.getText()+" \n" +
+                "and s.cant_coci_hd = "+txt_cant_hd.getText()+" \n" +
+                "and s.cant_coci_bbq = "+txt_cant_bbq.getText()+" \n" +
+                "and c.id_tipo_cocinero = 4;";
+            ArrayList<Preparacion> list_prep_plancha = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(plancha_cocineros);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_plancha.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_plancha,1);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_hd = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(hd_cocineros);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_hd.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_hd,2);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_yaroa = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(yaroa_cocineros);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_yaroa.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_yaroa,3);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            ArrayList<Preparacion> list_prep_bbq = new ArrayList<>();
+            try {
+                rs = dbase.execSelect(bbq_cocineros);
+                while(rs.next()){
+                    Preparacion prepa = new Preparacion();
+                    prepa.setId_simulacion(rs.getInt(1));
+                    prepa.setId(rs.getInt(2));
+                    prepa.setId_cocinero(rs.getInt(3));
+                    prepa.setId_producto(rs.getInt(4));
+                    prepa.setT_inicio_cola(rs.getTime(5));
+                    prepa.setT_fin_cola(rs.getTime(6));
+                    prepa.setT_entrega(rs.getTime(7));
+                    list_prep_bbq.add(prepa);
+                }
+                llenarInfoCocineros(list_prep_bbq,4);
+            } catch (SQLException ex) {
+                Logger.getLogger(frm_conclusiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         dbase.CerrarConexion();
 
     }//GEN-LAST:event_btn_verActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void llenarInfoClientes(ArrayList<Visita>list_visitas){
+        
+        int cant_simulaciones = 0;
+        int tmp_simulacion = 0;
+        int total_minutos_servicio = 0;
+        int total_minutos_comer =0;
+        int total_minutos_salir = 0;
+    
+        for(Visita visit : list_visitas){
+            if(visit.getId_simulacion() != tmp_simulacion){
+                tmp_simulacion = visit.getId_simulacion();
+                cant_simulaciones++;    
+            }
+            
+            int tiempo_servicio =
+                    Utilities.minutesBetween(visit.getHora_orden().getTime()
+                            , visit.getHora_entrega().getTime());
+            System.out.println("Tiempo Servicio idVisita = "+visit.getId()+" : t="+tiempo_servicio);
+            total_minutos_servicio = total_minutos_servicio + tiempo_servicio;
+            
+            int tiempo_comida = 
+                    Utilities.minutesBetween(visit.getHora_entrega().getTime()
+                            , visit.getHora_fin_comer().getTime());
+            total_minutos_comer = total_minutos_comer + tiempo_comida;
+            
+            int tiempo_salida =  
+                    Utilities.minutesBetween(visit.getHora_fin_comer().getTime()
+                            , visit.getHora_salida().getTime());
+            total_minutos_salir = total_minutos_salir + tiempo_salida;
+            
+        }
+        
+        int avg_filas = list_visitas.size() / cant_simulaciones;
+        System.out.println("Size = "+list_visitas.size());
+        //Se calculan los promedios de los tiempos
+        float min_acum_simu = total_minutos_servicio / cant_simulaciones;
+        float promedio_t_servicio = min_acum_simu / avg_filas;
+        System.out.println("TIEMPO DE SERVICIO\n minutos acumulados ="+total_minutos_servicio+"\n"
+                + " Simulaciones ="+cant_simulaciones+"\n"
+                        + "Tamaño de la lista="+list_visitas.size()+"\n"
+                                + "------------------------------------------------------------------");
+        min_acum_simu = total_minutos_comer / cant_simulaciones;
+        float promedio_t_comer = min_acum_simu / avg_filas;
+        min_acum_simu = total_minutos_salir / cant_simulaciones;
+        float promedio_t_salir = min_acum_simu / avg_filas;
+        
+        lbl_cant_simulaciones.setText(cant_simulaciones+"");
+        txt_avg_servicio.setText(promedio_t_servicio+"'");
+        txt_avg_comer.setText(promedio_t_comer+"'");
+        txt_avg_salir.setText(promedio_t_salir+"'");
+        
+        
+    }
+    
+    private void llenarInfoCocineros(ArrayList<Preparacion> lista_prepa,int tipo_cocinero){
+        
+        int cant_simulaciones = 0;
+        int tmp_simulacion = 0;
+        int total_min_ocio = 0;
+        System.out.println(lista_prepa.size()+" "+tipo_cocinero);
+        
+        // -1 para que no llegue a la ultima visita y no se revose al sumarle al tiempo inicio
+        for(int x=0;x<lista_prepa.size()-1;x++){
+            
+            if(lista_prepa.get(x).getId_simulacion() != tmp_simulacion){
+                tmp_simulacion = lista_prepa.get(x).getId_simulacion();
+                cant_simulaciones++;
+                
+            }
+            int tiempo_ocio = 
+                    Utilities.minutesBetween(lista_prepa.get(x).getT_entrega().getTime()
+                            , lista_prepa.get(x+1).getT_inicio_cola().getTime());
+            if(tiempo_ocio>0)
+                total_min_ocio = total_min_ocio + tiempo_ocio;
+            
+        }
+        //System.out.println(cant_simulaciones+" Sumo y setio Simulacion id ="+tmp_simulacion);
+        float tiempo_ocio = total_min_ocio / cant_simulaciones;//Promedio global
+        
+        int cant_empleados;
+        switch (tipo_cocinero){
+            case 1:
+                cant_empleados = Integer.parseInt(txt_cant_plancha.getText());
+                tiempo_ocio = tiempo_ocio / cant_empleados;
+                txt_ocio_plancha.setText(tiempo_ocio+"'");
+                txt_prep_plancha.setText((lista_prepa.size()/cant_simulaciones)+"");
+                break;
+            case 2:
+                cant_empleados = Integer.parseInt(txt_cant_hd.getText());
+                tiempo_ocio = tiempo_ocio / cant_empleados;
+                txt_ocio_hd.setText(tiempo_ocio+"'");
+                txt_prep_hd.setText((lista_prepa.size()/cant_simulaciones)+"");
+                break;
+            case 3:
+                cant_empleados = Integer.parseInt(txt_cant_yaroa.getText());
+                tiempo_ocio = tiempo_ocio / cant_empleados;
+                txt_ocio_yaroa.setText(tiempo_ocio+"'");
+                txt_prep_yaroa.setText((lista_prepa.size()/cant_simulaciones)+"");
+                break;
+            case 4:
+                cant_empleados = Integer.parseInt(txt_cant_bbq.getText());
+                tiempo_ocio = tiempo_ocio / cant_empleados;
+                txt_ocio_bbq.setText(tiempo_ocio+"'");
+                txt_prep_bbq.setText((lista_prepa.size()/cant_simulaciones)+"");
+                break;
+        }
+        
+    }
+    
+    private void limpiar_txt(){
+        txt_avg_comer.setText("");
+        txt_avg_salir.setText("");
+        txt_avg_servicio.setText("");
+        txt_avg_visitas.setText("");
+        
+        txt_ocio_bbq.setText("");
+        txt_ocio_hd.setText("");
+        txt_ocio_plancha.setText("");
+        txt_ocio_yaroa.setText("");
+        
+        txt_prep_bbq.setText("");
+        txt_prep_hd.setText("");
+        txt_prep_plancha.setText("");
+        txt_prep_yaroa.setText("");
+        
+        lbl_cant_simulaciones.setText("");
+        
+        
+        
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -500,6 +991,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -512,6 +1004,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbl_cant_simulaciones;
     private javax.swing.JTable tb_productos;
     private javax.swing.JTextField txt_avg_comer;
     private javax.swing.JTextField txt_avg_salir;

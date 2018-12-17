@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
+import org.joda.time.LocalTime;
+import org.joda.time.Minutes;
 
 
 
@@ -71,4 +73,10 @@ public class Utilities {
             return 1;
     }
 
+    public static int minutesBetween(long t1,long t2){
+        LocalTime lt1 = new LocalTime(t1);
+        LocalTime lt2 = new LocalTime(t2);
+        Minutes diff_min = Minutes.minutesBetween(lt1, lt2);
+        return diff_min.getMinutes();
+    }
 }

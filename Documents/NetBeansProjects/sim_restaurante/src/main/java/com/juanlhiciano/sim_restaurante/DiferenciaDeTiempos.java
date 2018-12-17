@@ -16,8 +16,8 @@ import org.joda.time.Minutes;
 public class DiferenciaDeTiempos {
     
     public static void main(String [] args){
-        LocalTime lt1 = new LocalTime(5,0,0);
-        LocalTime lt2 = new LocalTime(6,30,0);
+        LocalTime lt1 = new LocalTime(6,30,0);
+        LocalTime lt2 = new LocalTime(5,0,0);
         
         long diferencia = lt1.getMillisOfDay() - lt2.getMillisOfDay();
         long diffSec = diferencia / 1000;

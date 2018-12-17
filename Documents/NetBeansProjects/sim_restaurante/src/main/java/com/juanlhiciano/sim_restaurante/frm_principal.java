@@ -652,6 +652,7 @@ public class frm_principal extends javax.swing.JFrame {
 
     private void btnIniciarSim1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSim1ActionPerformed
         // TODO add your handling code here:
+        new frm_conclusiones().setVisible(true);
     }//GEN-LAST:event_btnIniciarSim1ActionPerformed
 
     //*************************Generar Tiempos*********************************
