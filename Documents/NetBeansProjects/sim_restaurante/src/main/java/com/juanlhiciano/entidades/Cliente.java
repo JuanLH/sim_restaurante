@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.juanlhiciano.clases;
+package com.juanlhiciano.entidades;
 
 import Enumeradores.EstadoCliente;
+import com.juanlhiciano.database.Db;
 import com.juanlhiciano.entidades.Orden;
 import com.juanlhiciano.entidades.Visita;
+import com.juanlhiciano.utilidades.Utilities;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;

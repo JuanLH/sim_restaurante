@@ -5,6 +5,7 @@
  */
 package com.juanlhiciano.clases;
 
+import com.juanlhiciano.entidades.Cliente;
 import Enumeradores.EstadoCliente;
 import java.awt.Color;
 import java.awt.Rectangle;

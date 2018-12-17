@@ -7,7 +7,7 @@ package com.juanlhiciano.sim_restaurante;
 
 import Enumeradores.EstadoCliente;
 import Enumeradores.EstadoOrden;
-import com.juanlhiciano.clases.Cliente;
+import com.juanlhiciano.entidades.Cliente;
 import com.juanlhiciano.clases.ListaLlegada;
 import com.juanlhiciano.clases.ListaOrdenBbq;
 import com.juanlhiciano.clases.ListaOrdenHd;
@@ -15,6 +15,7 @@ import com.juanlhiciano.clases.ListaOrden;
 import com.juanlhiciano.clases.ListaOrdenYaroa;
 import com.juanlhiciano.clases.ListaParados;
 import com.juanlhiciano.clases.ListaSentados;
+import com.juanlhiciano.database.Db;
 import com.juanlhiciano.entidades.Dia;
 import com.juanlhiciano.entidades.Orden;
 import com.juanlhiciano.entidades.Producto;
@@ -22,8 +23,10 @@ import com.juanlhiciano.entidades.Tanda;
 import com.juanlhiciano.utilidades.Utilities;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+import java.awt.Color;
 import java.awt.Rectangle;
 import static java.lang.Thread.sleep;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.DecimalFormat;
@@ -65,6 +68,8 @@ public class frm_principal extends javax.swing.JFrame {
     int denominador_tiempo;
     Tanda tanda;
     Producto productos;
+    ArrayList<Dia> dias;
+    int id_simulacion;
     
     //*********************Generar Tiempo***************************************
      List<Cliente> clientesG;
@@ -105,12 +110,13 @@ public class frm_principal extends javax.swing.JFrame {
         }
         time = new LocalTime(7,0,0);//Apertura
         try {
-            ArrayList<Dia> dias = Dia.getDias();
+            dias = Dia.getDias();
             
             
             cmbDias.removeAllItems();
             for(Dia dia : dias){
                 cmbDias.addItem(dia.toString());
+                
             }
         } catch (SQLException ex) {
             Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,7 +160,7 @@ public class frm_principal extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         lblCantBbq = new javax.swing.JLabel();
         lblTiempo = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        panelPrincipal = new javax.swing.JPanel();
         cmbDias = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -165,7 +171,8 @@ public class frm_principal extends javax.swing.JFrame {
         txtYaroa = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtBbq = new javax.swing.JTextField();
-        btnIniciarSim = new javax.swing.JButton();
+        btnSimular = new javax.swing.JButton();
+        btnIniciarSim1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -182,7 +189,7 @@ public class frm_principal extends javax.swing.JFrame {
         panelCliLlegando.setLayout(panelCliLlegandoLayout);
         panelCliLlegandoLayout.setHorizontalGroup(
             panelCliLlegandoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1300, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         panelCliLlegandoLayout.setVerticalGroup(
             panelCliLlegandoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +217,7 @@ public class frm_principal extends javax.swing.JFrame {
         panelCliParados.setLayout(panelCliParadosLayout);
         panelCliParadosLayout.setHorizontalGroup(
             panelCliParadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 479, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         panelCliParadosLayout.setVerticalGroup(
             panelCliParadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,7 +233,7 @@ public class frm_principal extends javax.swing.JFrame {
         PlanchaPanel.setLayout(PlanchaPanelLayout);
         PlanchaPanelLayout.setHorizontalGroup(
             PlanchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         PlanchaPanelLayout.setVerticalGroup(
             PlanchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,7 +246,7 @@ public class frm_principal extends javax.swing.JFrame {
         HdPanel.setLayout(HdPanelLayout);
         HdPanelLayout.setHorizontalGroup(
             HdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         HdPanelLayout.setVerticalGroup(
             HdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,7 +259,7 @@ public class frm_principal extends javax.swing.JFrame {
         YaroaPanel.setLayout(YaroaPanelLayout);
         YaroaPanelLayout.setHorizontalGroup(
             YaroaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         YaroaPanelLayout.setVerticalGroup(
             YaroaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,7 +272,7 @@ public class frm_principal extends javax.swing.JFrame {
         BbqPanel.setLayout(BbqPanelLayout);
         BbqPanelLayout.setHorizontalGroup(
             BbqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         BbqPanelLayout.setVerticalGroup(
             BbqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,8 +373,8 @@ public class frm_principal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBackground(new java.awt.Color(0, 153, 255));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CONFIGURACION", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        panelPrincipal.setBackground(new java.awt.Color(0, 153, 255));
+        panelPrincipal.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CONFIGURACION", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
         cmbDias.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         cmbDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -395,19 +402,27 @@ public class frm_principal extends javax.swing.JFrame {
 
         txtBbq.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
-        btnIniciarSim.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnIniciarSim.setText("INICIAR");
-        btnIniciarSim.addActionListener(new java.awt.event.ActionListener() {
+        btnSimular.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnSimular.setText("SIMULAR");
+        btnSimular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIniciarSimActionPerformed(evt);
+                btnSimularActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        btnIniciarSim1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnIniciarSim1.setText("RESUMEN");
+        btnIniciarSim1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarSim1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
+        panelPrincipal.setLayout(panelPrincipalLayout);
+        panelPrincipalLayout.setHorizontalGroup(
+            panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelPrincipalLayout.createSequentialGroup()
                 .addGap(7, 7, 7)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -428,15 +443,17 @@ public class frm_principal extends javax.swing.JFrame {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtBbq, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(btnIniciarSim)
+                .addGap(18, 18, 18)
+                .addComponent(btnSimular)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnIniciarSim1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        panelPrincipalLayout.setVerticalGroup(
+            panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbDias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
@@ -447,7 +464,8 @@ public class frm_principal extends javax.swing.JFrame {
                     .addComponent(txtYaroa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(txtBbq, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnIniciarSim, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnSimular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnIniciarSim1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -465,7 +483,7 @@ public class frm_principal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelCliLlegando, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(panelCliSentados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -480,7 +498,7 @@ public class frm_principal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelCocina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -505,7 +523,9 @@ public class frm_principal extends javax.swing.JFrame {
         llegadas.remove();
     }//GEN-LAST:event_jButton3MouseClicked
 
-    private void btnIniciarSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSimActionPerformed
+    private void btnSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularActionPerformed
+        
+        float miu_llegada = dias.get(cmbDias.getSelectedIndex()).getMiu();
         
         //*********************Generar Tiempo***********************************
         clientesG = new ArrayList<>();
@@ -529,11 +549,18 @@ public class frm_principal extends javax.swing.JFrame {
         for(int x=0;x<ordenesBbqG.length;x++){
             ordenesBbqG[x] = new ArrayList<>();
         }
-        
-        generarTiempos();
+        Db dbase = Utilities.getConection();
+        try {
+            generarData(dbase, miu_llegada);
+        } catch (SQLException ex) {
+            Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dbase.CerrarConexion();
         //**********************************************************************
-        
-        /*Thread[] coc_plancha = new Thread[Integer.parseInt(txtPlancha.getText())];
+        /*
+        Thread[] coc_plancha = new Thread[Integer.parseInt(txtPlancha.getText())];
         Thread[] coc_hd = new Thread[Integer.parseInt(txtHd.getText())];
         Thread[] coc_yaroa = new Thread[Integer.parseInt(txtYaroa.getText())];
         Thread[] coc_bbq = new Thread[Integer.parseInt(txtBbq.getText())];
@@ -618,20 +645,23 @@ public class frm_principal extends javax.swing.JFrame {
             }
         };
         sw.execute();
-        
         */
         
-    }//GEN-LAST:event_btnIniciarSimActionPerformed
+        
+    }//GEN-LAST:event_btnSimularActionPerformed
+
+    private void btnIniciarSim1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSim1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnIniciarSim1ActionPerformed
 
     //*************************Generar Tiempos*********************************
     
     
-    private void generarTiempos(){
+    private void generarTiempos(float miu_llegada){
         LocalTime clock = new LocalTime(hora_abrir);
         HiloMesero mesero = new HiloMesero();
         
         while(clock.getHourOfDay()<hora_cerrar.getHourOfDay()){
-            float miu_llegada = 1.8f;
             Double tiempo_llegada = Utilities.getExponencialTime(miu_llegada);
             clock = clock.plusMillis((int) (tiempo_llegada * 60000));
             if(clock.getHourOfDay()>=12)//cliente llego tarde , el negocio se cerro
@@ -964,6 +994,115 @@ public class frm_principal extends javax.swing.JFrame {
         System.out.println("Salio del for------------------------------------------");
         return menorCola;
     }
+    
+    public void generarData(Db dbase,float miu_llegada) throws SQLException, InterruptedException{
+        generarTiempos(miu_llegada);//Aqui se generan los tiempos y se guardan en memoria    
+        
+        String insert_sim = "INSERT INTO public.simulacion(id, id_dia,"
+                + " cant_coci_plancha, cant_coci_yaroa, cant_coci_hd,"
+                + " cant_coci_bbq) VALUES (?, ?, ?, ?, ?, ?);";
+
+        try {
+            dbase.getConnection().setAutoCommit(false);
+            id_simulacion = Utilities.getNextId("simulacion", dbase);
+            PreparedStatement ps = dbase.getConnection().prepareStatement(insert_sim);
+            ps.setInt(1, id_simulacion);
+            ps.setInt(2,cmbDias.getSelectedIndex()+1);
+            ps.setInt(3, ordenesPlanchaG.length);
+            ps.setInt(4, ordenesYaroaG.length);
+            ps.setInt(5, ordenesHdG.length);
+            ps.setInt(6, ordenesBbqG.length);
+            ps.executeUpdate();
+
+            for(Cliente cli : clientesG){
+                String insert_visit = "INSERT INTO public.visita"
+                        + "(id, id_simulacion, hora_llegada, hora_orden,"
+                        + " hora_entrega, hora_comida, hora_salida) " 
+                        + "    VALUES (?, ?, ?, ?, ?, ?, ?);";
+                int id_visita = Utilities.getNextId("visita", dbase);
+                PreparedStatement pv = dbase.getConnection()
+                        .prepareStatement(insert_visit);
+                pv.setInt(1, id_visita);
+                pv.setInt(2, id_simulacion);
+                pv.setTime(3, cli.getVisita().getHora_llegada());
+                pv.setTime(4, cli.getVisita().getHora_orden());
+                pv.setTime(5, cli.getVisita().getHora_entrega());
+                pv.setTime(6, cli.getVisita().getHora_fin_comer());
+                pv.setTime(7, cli.getVisita().getHora_salida());
+                pv.executeUpdate();
+
+                for(Orden orden : cli.getOrdenes()){
+                    String insert_orden = "INSERT INTO public.orden"
+                            + "(id, id_visita, id_producto, t_inicio_cola,"
+                            + " t_fin_cola, t_entrega) "
+                            + "VALUES (?, ?, ?, ?, ?, ?);";
+                    int id_orden = Utilities.getNextId("orden", dbase);
+                    PreparedStatement po = dbase.getConnection()
+                            .prepareStatement(insert_orden);
+                    po.setInt(1, id_orden);
+                    po.setInt(2, id_visita);
+                    po.setInt(3, orden.getProducto().getId());
+                    po.setTime(4, orden.getT_inicio_cola());
+                    po.setTime(5, orden.getT_fin_cola());
+                    po.setTime(6, orden.getT_entrega());
+                    po.executeUpdate();
+                        
+                }
+            }
+            // 1 = Cocinero Plancha, 2= Cocinero Yaroa,3 .....                                                        
+            insertCocineros(ordenesPlanchaG, dbase, id_simulacion, 1);
+            insertCocineros(ordenesHdG, dbase, id_simulacion, 2);
+            insertCocineros(ordenesYaroaG, dbase, id_simulacion, 3);
+            insertCocineros(ordenesBbqG, dbase, id_simulacion, 4);
+            dbase.getConnection().commit();
+            btnSimular.setBackground(Color.GREEN);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+        }    
+        catch(SQLException ex){
+            dbase.getConnection().rollback();
+            btnSimular.setBackground(Color.red);
+            panelPrincipal.revalidate();
+            panelPrincipal.repaint();
+            System.err.println(ex.getMessage());
+        }
+        finally{
+            dbase.getConnection().setAutoCommit(true);
+        }
+    }
+    
+    private void insertCocineros(List<Orden>[] cocineros,Db dbase,int id_simulacion, int id_tipo_cocinero) throws SQLException{
+        for(int x=0;x<cocineros.length;x++){
+            String insert_cocinero ="INSERT INTO public.cocineros(\n" +
+            "            id, id_tipo_cocinero, id_simulacion)\n" +
+            "    VALUES (?, ?, ?);";
+            PreparedStatement pc = dbase.getConnection()
+                            .prepareStatement(insert_cocinero);
+            int id_cocinero = Utilities.getNextId("cocineros", dbase);
+            pc.setInt(1,id_cocinero);
+            pc.setInt(2,id_tipo_cocinero);
+            pc.setInt(3,id_simulacion);
+            pc.executeUpdate();
+            
+            for(Orden orden : cocineros[x]){
+                String insert_preparaciones = "INSERT INTO public.preparaciones(\n" +
+                "            id, id_cocinero, id_producto, t_inicio_cola, t_fin_cola, t_entrega)\n" +
+                "    VALUES (?, ?, ?, ?, ?, ?);";
+                PreparedStatement pp = dbase.getConnection()
+                            .prepareStatement(insert_preparaciones);
+                int id_preparaciones = Utilities.getNextId("preparaciones", dbase);
+                pp.setInt(1, id_preparaciones);
+                pp.setInt(2, id_cocinero);
+                pp.setInt(3, orden.getProducto().getId());
+                pp.setTime(4, orden.getT_inicio_cola());
+                pp.setTime(5, orden.getT_fin_cola());
+                pp.setTime(6, orden.getT_entrega());
+                pp.executeUpdate();
+            }
+            
+        }
+    }
+    
     //*************************************************************************
     private Time getMaxTimeEntrega(Cliente cliente){
         LocalTime timeMax = new LocalTime(0,0,0);
@@ -1485,7 +1624,8 @@ public class frm_principal extends javax.swing.JFrame {
     private javax.swing.JPanel HdPanel;
     private javax.swing.JPanel PlanchaPanel;
     private javax.swing.JPanel YaroaPanel;
-    private javax.swing.JButton btnIniciarSim;
+    private javax.swing.JButton btnIniciarSim1;
+    private javax.swing.JButton btnSimular;
     private javax.swing.JComboBox<String> cmbDias;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
@@ -1497,7 +1637,6 @@ public class frm_principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblCantBbq;
     private javax.swing.JLabel lblCantHd;
     private javax.swing.JLabel lblCantPlancha;
@@ -1507,6 +1646,7 @@ public class frm_principal extends javax.swing.JFrame {
     private javax.swing.JPanel panelCliParados;
     private javax.swing.JPanel panelCliSentados;
     private javax.swing.JPanel panelCocina;
+    private javax.swing.JPanel panelPrincipal;
     private javax.swing.JTextField txtBbq;
     private javax.swing.JTextField txtHd;
     private javax.swing.JTextField txtPlancha;

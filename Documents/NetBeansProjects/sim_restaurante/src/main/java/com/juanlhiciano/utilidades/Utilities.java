@@ -54,22 +54,21 @@ public class Utilities {
         return Pathfile.substring(lastIndexOf);
     }
 
-    public static int getNextId(Db dbase,String table) throws SQLException {
-            String query = "SELECT id FROM public."+table+" order by id DESC limit 1;";
-            ResultSet rs = dbase.execSelect(query);
-
-            if(rs.next()) 
-                    return rs.getInt(1)+1;
-            else 
-                    return 1;
-
-
-    }
+    
 
     public static Double getExponencialTime(float miu){
         Double rand_llegada = Utilities.doubleRand(0, 1);
         Double tiempo_llegada = -miu * Math.log(rand_llegada);
         return tiempo_llegada;
+    }
+    
+    public static int getNextId(String table,Db dbase) throws SQLException{
+        String sql = "select id from "+table+" order by id desc limit 1;";
+        ResultSet rs = dbase.execSelect(sql);
+        if(rs.next())
+            return rs.getInt(1)+1;
+        else
+            return 1;
     }
 
 }

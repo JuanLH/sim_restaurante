@@ -6,6 +6,7 @@
 package com.juanlhiciano.entidades;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,7 +15,9 @@ import java.sql.Time;
 public class Visita {
     int id,id_simulacion;
     Time hora_llegada,hora_orden,hora_entrega,hora_fin_comer,hora_salida;
-
+    ArrayList<Orden> ordenes;
+    
+    public Visita(){}
     public Visita(Time hora_llegada){
         this.hora_llegada = hora_llegada;
         hora_orden=hora_entrega=hora_salida=null;

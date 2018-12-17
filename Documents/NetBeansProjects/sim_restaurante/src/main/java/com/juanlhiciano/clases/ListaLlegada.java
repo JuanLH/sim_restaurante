@@ -6,6 +6,7 @@
 package com.juanlhiciano.clases;
 
 
+import com.juanlhiciano.entidades.Cliente;
 import java.awt.Rectangle;
 import java.sql.Time;
 import java.util.ArrayList;

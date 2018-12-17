@@ -52,7 +52,7 @@ public class Simulacion {
 	}
 	
 	public void insert(Db dbase) throws SQLException {
-		int nextId = Utilities.getNextId(dbase, "simulacion");
+		int nextId = Utilities.getNextId("simulacion",dbase);
 		String sql = "INSERT INTO public.simulacion(id, id_dia, cant_coci_p1, cant_coci_p2, cant_coci_p3)"
 				+ " VALUES (?, ?, ?, ?, ?);";
 		PreparedStatement ps = dbase.getConnection().prepareStatement(sql);
