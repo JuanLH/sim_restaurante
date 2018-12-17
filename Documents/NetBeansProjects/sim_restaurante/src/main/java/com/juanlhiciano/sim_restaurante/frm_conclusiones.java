@@ -286,7 +286,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
         txt_ocio_plancha.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel12.setText("PROM .TIEMPO DE OCIO AL  DIA(MIN):");
+        jLabel12.setText("TIEMPO DE OCIO X COCINERO:");
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel13.setText("HOT DOG");
@@ -304,7 +304,7 @@ public class frm_conclusiones extends javax.swing.JFrame {
         jLabel15.setText("BBQ");
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel16.setText("PROM. DEL TOTAL DE PROD. PREPARADOS AL DIA:");
+        jLabel16.setText("PRODUCTOS REALIZADOS X COCINERO:");
 
         txt_prep_plancha.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
@@ -890,8 +890,10 @@ public class frm_conclusiones extends javax.swing.JFrame {
             int tiempo_ocio = 
                     Utilities.minutesBetween(lista_prepa.get(x).getT_entrega().getTime()
                             , lista_prepa.get(x+1).getT_inicio_cola().getTime());
-            if(tiempo_ocio>0)
+            if(tiempo_ocio>0){
+                System.out.println(x+" Tiempo ocio = "+tiempo_ocio+" Tipo "+tipo_cocinero);
                 total_min_ocio = total_min_ocio + tiempo_ocio;
+            }
             
         }
         //System.out.println(cant_simulaciones+" Sumo y setio Simulacion id ="+tmp_simulacion);

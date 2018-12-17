@@ -85,7 +85,7 @@ public class frm_principal extends javax.swing.JFrame {
         
         
         
-        denominador_tiempo = 1024;
+        denominador_tiempo = 512;
         listaLlegada= new ArrayList<>();
         llegadas = new ListaLlegada(panelCliLlegando);
         sentados = new ListaSentados(panelCliSentados);
@@ -549,6 +549,7 @@ public class frm_principal extends javax.swing.JFrame {
         for(int x=0;x<ordenesBbqG.length;x++){
             ordenesBbqG[x] = new ArrayList<>();
         }
+        
         Db dbase = Utilities.getConection();
         try {
             generarData(dbase, miu_llegada);
@@ -559,7 +560,7 @@ public class frm_principal extends javax.swing.JFrame {
         }
         dbase.CerrarConexion();
         //**********************************************************************
-        /*
+        
         Thread[] coc_plancha = new Thread[Integer.parseInt(txtPlancha.getText())];
         Thread[] coc_hd = new Thread[Integer.parseInt(txtHd.getText())];
         Thread[] coc_yaroa = new Thread[Integer.parseInt(txtYaroa.getText())];
@@ -616,8 +617,8 @@ public class frm_principal extends javax.swing.JFrame {
             coc_yaroa[x].execute();
         }
         */
-        /*
-        Reloj reloj = new Reloj();
+        
+        //Reloj reloj = new Reloj();
         Thread hilo_llegadas = new Thread(new HiloLlegada());
         hilo_llegadas.setName("LLEGADAS");
         Thread hilo_mesero = new Thread(new HiloMesero());
@@ -626,7 +627,7 @@ public class frm_principal extends javax.swing.JFrame {
         
         hilo_mesero.start();
         hilo_llegadas.start();
-        reloj.execute();
+        //reloj.execute();
       
         
         SwingWorker sw = new SwingWorker() {
@@ -645,7 +646,7 @@ public class frm_principal extends javax.swing.JFrame {
             }
         };
         sw.execute();
-        */
+        
         
         
     }//GEN-LAST:event_btnSimularActionPerformed
@@ -1180,11 +1181,11 @@ public class frm_principal extends javax.swing.JFrame {
         { 
            while(time.getHourOfDay()<12){
                Double rand = Utilities.doubleRand(0, 1);
-               Double miu = 3.8;
+               float miu = dias.get(cmbDias.getSelectedIndex()).getMiu();
                Double tiempo = -miu * Math.log(rand);
                System.out.println("Random  "+rand+"  tiempo ="+tiempo+" Hora ="+time.toString());
                int milis = (int)(tiempo * 60000);
-               //time = time.plusMillis(milis);
+               time = time.plusMillis(milis);
                int escala = milis / denominador_tiempo;
                try {
                    sleep(escala);
@@ -1192,7 +1193,7 @@ public class frm_principal extends javax.swing.JFrame {
                    Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
                }
                llegadas.add(new Time(time.getHourOfDay(), time.getMinuteOfHour(), time.getSecondOfMinute()));
-               //System.out.println("Tiempo de llegada ="+llegadas.get(llegadas.size()-1).getVisita().getHora_llegada());
+               System.out.println("Tiempo de llegada ="+llegadas.get(llegadas.size()-1).getVisita().getHora_llegada());
            }
         }
     }
@@ -1572,7 +1573,7 @@ public class frm_principal extends javax.swing.JFrame {
             while(time.getHourOfDay()<12){
                 int milis= 1000/denominador_tiempo;
                 
-                sleep(milis, 0);
+                sleep(milis, 1000);
                 publish(milis);
             }
             return null;
