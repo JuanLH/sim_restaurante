@@ -85,7 +85,7 @@ public class frm_principal extends javax.swing.JFrame {
         
         
         
-        denominador_tiempo = 512;
+        denominador_tiempo = 1024;
         listaLlegada= new ArrayList<>();
         llegadas = new ListaLlegada(panelCliLlegando);
         sentados = new ListaSentados(panelCliSentados);
@@ -1175,6 +1175,7 @@ public class frm_principal extends javax.swing.JFrame {
             }
         }
     }
+    
     private class HiloLlegada implements Runnable{
         @Override
         public void run() 
@@ -1441,12 +1442,12 @@ public class frm_principal extends javax.swing.JFrame {
                        Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
                    }
                    
-                   if(countSalida == 20){
+                   /*if(countSalida == 20){
                        LOGGER.info("Se fue el cocinero -----------------------");
                        return;
                    }
                    else
-                       countSalida++;
+                       countSalida++;*/
                }
             }
         }
