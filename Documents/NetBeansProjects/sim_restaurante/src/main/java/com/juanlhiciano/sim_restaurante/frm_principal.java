@@ -552,6 +552,7 @@ public class frm_principal extends javax.swing.JFrame {
         
         Db dbase = Utilities.getConection();
         try {
+            //Aqui es que esta la logica
             generarData(dbase, miu_llegada);
         } catch (SQLException ex) {
             Logger.getLogger(frm_principal.class.getName()).log(Level.SEVERE, null, ex);
@@ -775,7 +776,7 @@ public class frm_principal extends javax.swing.JFrame {
             System.out.println("Producto = "+prod.getNombre());
             Orden or = new Orden(prod,new Time(clock.getHourOfDay(),clock.getMinuteOfHour(),clock.getSecondOfMinute()));
 
-
+           
             if(or.getProducto() != null){
                 int minPreparacion = Utilities.intRand(
                         or.getProducto().getTiempo_min_prep(),
@@ -998,8 +999,11 @@ public class frm_principal extends javax.swing.JFrame {
     }
     
     public void generarData(Db dbase,float miu_llegada) throws SQLException, InterruptedException{
-        generarTiempos(miu_llegada);//Aqui se generan los tiempos y se guardan en memoria    
         
+        
+        /*---------------------------------------------------------------------*/
+        generarTiempos(miu_llegada);//Aqui se generan los tiempos y se guardan en memoria    
+        /*----------------------------------------------------------------------*/
         String insert_sim = "INSERT INTO public.simulacion(id, id_dia,"
                 + " cant_coci_plancha, cant_coci_yaroa, cant_coci_hd,"
                 + " cant_coci_bbq) VALUES (?, ?, ?, ?, ?, ?);";
